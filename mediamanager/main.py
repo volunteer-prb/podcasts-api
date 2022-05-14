@@ -1,13 +1,23 @@
-from flask import Blueprint, request
+from celery import Celery
+from mediamanager.objects.video import Entry
 
-main = Blueprint('main', __name__)
+broker_url = 'amqp://guest@localhost//'
 
-@main.route('/')
-def index():
-    return 'Index'
+celery = Celery('test', broker=broker_url)
+celery.conf.update(
+    task_serializer='json',
+    # accept_content=['json'],  # Ignore other content
+    result_serializer='json',
+    timezone='Europe/Paris',
+    enable_utc=True,
+    result_persistent=True,
+    ignore_result=False
+)
 
-@main.route('/new', methods=['POST'])
-def profile():
-    data = request.json
-    
-    return 'List'
+def _download(video: Entry):
+    print('Downloading {}'.format(video.title))
+    return True
+
+@celery.task
+def download(video: Entry):
+    _download(video)

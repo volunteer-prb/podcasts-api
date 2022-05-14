@@ -1,5 +1,6 @@
 import pytest
-from backend import create_app
+from webapp.backend import create_app
+from mediamanager.main import celery
 
 xml_examp = '''<feed xmlns:yt="http://www.youtube.com/xml/schemas/2015"
          xmlns="http://www.w3.org/2005/Atom">
@@ -22,6 +23,10 @@ xml_examp = '''<feed xmlns:yt="http://www.youtube.com/xml/schemas/2015"
                 </entry>
                 </feed>'''
 
+@pytest.fixture(scope='module')
+def celery_app(request):
+    celery.conf.update(task_always_eager=True)
+    return celery
 
 @pytest.fixture()
 def app():
@@ -47,7 +52,8 @@ def runner(app):
     return app.test_cli_runner()
 
 
-def test_hooks(client):
+def test_hooks(client, celery_app):
     resp = client.post('/hooks/new', data=xml_examp)
     assert resp.status_code == 200
-    assert resp.data == b'yt:video:VIDEO_ID'
+    assert resp.is_json is True
+    assert resp.json['id'] == 'yt:video:VIDEO_ID'
