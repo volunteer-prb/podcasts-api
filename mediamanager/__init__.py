@@ -14,10 +14,7 @@ def create_app():
     db.init_app(app)
 
     # blueprint for auth routes in our app
-    from backend.main import main as main_blueprint
-    from backend.hooks import hooks as hooks_blueprint
-
+    from mediamanager.main import main as main_blueprint
     app.register_blueprint(main_blueprint)
-    app.register_blueprint(hooks_blueprint, url_prefix='/hooks')
 
     return app
