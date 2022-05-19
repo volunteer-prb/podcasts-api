@@ -1,6 +1,6 @@
 import pytest
 from webapp.backend import create_app
-from mediamanager.main import celery
+from mediamanager.celery import celery
 
 xml_examp = '''<feed xmlns:yt="http://www.youtube.com/xml/schemas/2015"
          xmlns="http://www.w3.org/2005/Atom">
@@ -23,10 +23,12 @@ xml_examp = '''<feed xmlns:yt="http://www.youtube.com/xml/schemas/2015"
                 </entry>
                 </feed>'''
 
+
 @pytest.fixture(scope='module')
 def celery_app(request):
     celery.conf.update(task_always_eager=True)
     return celery
+
 
 @pytest.fixture()
 def app():

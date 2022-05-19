@@ -1,6 +1,7 @@
 import json
 import datetime
 
+
 class ObjectEncoder(json.JSONEncoder):
 
     def default(self, obj):

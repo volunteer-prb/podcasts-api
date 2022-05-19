@@ -1,7 +1,8 @@
 from flask import Blueprint, request, jsonify
 from xmltodict import parse
 from mediamanager.objects.video import Entry
-from mediamanager.main import download
+from mediamanager.celery import download
+from celery.execute import send_task
 
 hooks = Blueprint('hooks', __name__)
 
@@ -14,4 +15,5 @@ def index():
     yt_video = data['feed']['entry']
     entry = Entry(yt_video)
     download.delay(entry.to_json())
+    # send_task("mediamanager.download", args=[entry.to_json()])
     return jsonify(entry), 200

@@ -38,5 +38,5 @@ class Entry:
             'author': self.author,
             'uri': self.uri,
             'published': self.published,
-            'updated': self.updated
+            'updated': self.updated,
         }

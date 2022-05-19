@@ -1,9 +1,9 @@
 from celery import Celery
 from mediamanager.objects.video import Entry
 
-broker_url = 'amqp://guest@localhost//'
+broker_url = 'amqp://guest@localhost:8080//'
 
-celery = Celery('test', broker=broker_url)
+celery = Celery('mediamanager', broker=broker_url)
 celery.conf.update(
     task_serializer='json',
     # accept_content=['json'],  # Ignore other content
@@ -14,9 +14,11 @@ celery.conf.update(
     ignore_result=False
 )
 
+
 def _download(video: Entry):
     print('Downloading {}'.format(video.title))
     return True
+
 
 @celery.task
 def download(video: Entry):
