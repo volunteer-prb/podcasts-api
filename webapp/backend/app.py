@@ -16,8 +16,8 @@ def create_app():
     db.init_app(app)
 
     # blueprint for auth routes in our app
-    from webapp.backend.main import main as main_blueprint
-    from webapp.backend.hooks import hooks as hooks_blueprint
+    from main import main as main_blueprint
+    from hooks import hooks as hooks_blueprint
 
     app.register_blueprint(main_blueprint)
     app.register_blueprint(hooks_blueprint, url_prefix='/hooks')
