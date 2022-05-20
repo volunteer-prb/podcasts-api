@@ -1,19 +1,14 @@
 import re
 from os import environ
 
-from celery import Celery
-
-from publisher.objects import Envelope
-from publisher.objects.Recipient import TelegramRecipient
-from publisher.telegram.telegram_bot_api import TelegramBot
+from objects import Envelope
+from objects.Recipient import TelegramRecipient
+from telegram.telegram_bot_api import TelegramBot
 
 TG_MAX_PHOTO_LEN = 1000
 TG_MAX_MESSAGE_LEN = 4000
 
-app = Celery('telegram', broker=environ.get('TELEGRAM_BROKER', 'pyamqp://guest@localhost//'))
 
-
-@app.task
 def publish(envelope: Envelope):
     """Publish envelope to telegram channels"""
 
