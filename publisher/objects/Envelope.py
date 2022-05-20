@@ -10,7 +10,7 @@ class Envelope:
     description: str  # text description (under photo)
     hashtags: List[str]  # separated hashtag for message and audio
     publisher: str  # publisher name for audio
-    thumb: str  # path to preview photo file
+    photo: str  # path to preview photo file
     audio: str  # path to audio file
     recipients: List[Recipient]  # list of recipients
 

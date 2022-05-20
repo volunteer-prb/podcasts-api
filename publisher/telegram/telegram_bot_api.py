@@ -21,10 +21,17 @@ class TelegramBot:
         :return 'result' section from response json if ok
         """
         if files is not None:
-            args = {**json, **args}
-            json = None
-        args = '&'.join([f'{k}={v}' for k, v in self.__filter(**args).items()]) if args is not None else ''
-        response = requests.post(f'{self.__server}/bot{self.__token}/{method_name}?{args}', json=json, files=files)
+            if json is not None and args is not None:
+                args = {**json, **args}
+            elif args is None:
+                args = json
+            json = dict()
+        if json is None:
+            json = dict()
+        args = '&'.join([f'{k}={urllib.parse.quote_plus(str(v))}' for k, v in self.__filter(**args).items()]) if args is not None else ''
+        response = requests.post(f'{self.__server}/bot{self.__token}/{method_name}?{args}',
+                                 json=self.__filter(**json),
+                                 files=files)
         if response.status_code == 200 and (json := response.json()) and \
                 'ok' in json and json['ok'] is True and 'result' in json:
             return json['result']
@@ -114,6 +121,7 @@ class TelegramBot:
     def send_photo(self, chat_id, photo, caption=None, parse_mode=None, caption_entities=None, disable_notification=None,
                    protect_content=None, reply_to_message_id=None, allow_sending_without_reply=None, reply_markup=None):
         """Use this method to send photos. On success, the sent Message is returned.
+        Online docs: https://core.telegram.org/bots/api#sendphoto
         Parameter	                Type	                Required	Description
         chat_id	                    Integer or String	    Yes	        Unique identifier for the target chat or username of the target channel (in the format @channelusername)
         photo	                    InputFile or String	    Yes	        Photo to send. Pass a file_id as String to send a photo that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a photo from the Internet, or upload a new photo using multipart/form-data. The photo must be at most 10 MB in size. The photo's width and height must not exceed 10000 in total. Width and height ratio must be at most 20. More info on Sending Files »
@@ -147,8 +155,6 @@ class TelegramBot:
         else:
             args = data
             files = dict(photo=photo)
-        if args is not None:
-            args = dict((k, urllib.parse.quote_plus(v)) for k, v in args.items())
         return self.request('sendPhoto', json, files, args)
 
     def send_audio(self, chat_id, audio, caption=None, parse_mode=None, caption_entities=None, duration=None,
@@ -158,6 +164,7 @@ class TelegramBot:
         audio must be in the .MP3 or .M4A format. On success, the sent Message is returned. Bots can currently send
         audio files of up to 50 MB in size, this limit may be changed in the future.
         For sending voice messages, use the sendVoice method instead.
+        Online docs: https://core.telegram.org/bots/api#sendaudio
         Parameter	                Type	                Required	Description
         chat_id	                    Integer or String	    Yes	        Unique identifier for the target chat or username of the target channel (in the format @channelusername)
         audio	                    InputFile or String	    Yes	        Audio file to send. Pass a file_id as String to send an audio file that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get an audio file from the Internet, or upload a new one using multipart/form-data. More info on Sending Files »
@@ -210,6 +217,4 @@ class TelegramBot:
             args = data
             args['audio'] = audio
             files = dict(thumb=thumb)
-        if args is not None:
-            args = dict((k, urllib.parse.quote_plus(v)) for k, v in args.items())
         return self.request('sendAudio', json, files, args)

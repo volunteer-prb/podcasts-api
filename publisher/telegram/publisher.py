@@ -1,12 +1,18 @@
 import re
-from os import environ
+import shutil
+import urllib
+import uuid
+from os import environ, makedirs
 
-from objects import Envelope
+import cv2
+
+from objects.Envelope import Envelope
 from objects.Recipient import TelegramRecipient
 from telegram.telegram_bot_api import TelegramBot
 
 TG_MAX_PHOTO_LEN = 1000
 TG_MAX_MESSAGE_LEN = 4000
+TG_MAX_AUDIO_THUMB_SIZE = 320
 
 
 def publish(envelope: Envelope):
@@ -32,12 +38,34 @@ def publish(envelope: Envelope):
     if len(msg) > 0:
         messages.append(msg.strip())
 
+    tmpdir = f'/tmp/{str(uuid.uuid4())}'
+    makedirs(tmpdir, exist_ok=True)
+
+    photo = envelope.photo
+    # download thumb if url passed
+    if photo.startswith('http'):
+        filename = f'{tmpdir}/{str(uuid.uuid4())}'
+        urllib.request.urlretrieve(photo, filename)
+        photo = filename
+
+    # create thumbnail for audio
+    photo = cv2.imread(photo)
+    h, w = photo.shape[:2]
+    maxSize = max(h, w)
+    thumb = cv2.resize(photo, (int(w / maxSize * TG_MAX_AUDIO_THUMB_SIZE), int(h / maxSize * TG_MAX_AUDIO_THUMB_SIZE)))
+
+    audio = envelope.audio
+    if audio.startswith('http'):
+        filename = f'{tmpdir}/{str(uuid.uuid4())}'
+        urllib.request.urlretrieve(audio, filename)
+        audio = filename
+
     # filter recipient list, select only telegram recipients
     for recipient in [rec for rec in envelope.recipients if isinstance(rec, TelegramRecipient)]:
         # first send photo message
         tb.send_photo(
             chat_id=recipient.channel_id,
-            photo=envelope.thumb,
+            photo=cv2.imencode('.jpg', photo)[1],
             caption=messages[0],
             parse_mode='html',
         )
@@ -57,6 +85,8 @@ def publish(envelope: Envelope):
             parse_mode='html',
             performer=envelope.publisher,
             title=envelope.title,
-            audio=envelope.audio,  # todo: perform open(envelope.audio, 'rb') when passed file path, not url
-            thumb=envelope.thumb   # todo: perform open(envelope.thumb, 'rb') when passed file path, not url
+            audio=open(audio, 'rb'),
+            thumb=cv2.imencode('.jpg', thumb)[1]
         )
+
+    shutil.rmtree(tmpdir)
