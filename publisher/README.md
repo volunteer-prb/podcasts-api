@@ -25,6 +25,26 @@ docker run -e TELEGRAM_TOKEN=<put_bot_token_here> \
   volunteer-prb/podcasts-api-publisher
 ```
 
+In docker compose (increase maximum audio size to 2GB)
+```yaml
+version: '3.8'
+services:
+  telegram-bot-api:
+    image: aiogram/telegram-bot-api:latest
+    environment:
+      TELEGRAM_API_ID: <put_telegram_api_id>
+      TELEGRAM_API_HASH: <put_telegram_api_hash>
+    volumes:
+      - ./telegram-bot-api-data:/var/lib/telegram-bot-api
+
+  publisher:
+    image: volunteer-prb/podcasts-api-publisher:latest
+    environment:
+      TELEGRAM_SERVER: "http://telegram-bot-api:8081"
+      TELEGRAM_TOKEN: <put_bot_token_here>
+      REDIS_HOST: <redis_host>
+```
+
 ## Example 
 
 ```python
