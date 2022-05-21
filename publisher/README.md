@@ -40,9 +40,17 @@ services:
   publisher:
     image: volunteer-prb/podcasts-api-publisher:latest
     environment:
-      TELEGRAM_SERVER: "http://telegram-bot-api:8081"
+      TELEGRAM_SERVER: http://telegram-bot-api:8081
       TELEGRAM_TOKEN: <put_bot_token_here>
       REDIS_HOST: <redis_host>
+    depends_on:
+      - telegram-bot-api
+```
+
+Run with scale factor 3
+
+```commandline
+docker-compose up --scale publisher=3
 ```
 
 ## Example 

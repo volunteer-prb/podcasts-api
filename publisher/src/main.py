@@ -9,31 +9,33 @@ from objects.Envelope import Envelope
 from telegram import publisher
 
 
-def publish_event(event):
+def publish_event(data):
+    """Publish envelope (topic) to social media by recipients list"""
     try:
-        if event['type'] == 'message':
-            data = json.loads(event['data'])
-            envelope = Envelope.from_json(data)
-            publisher.publish(envelope)
+        envelope = Envelope.from_json(data)
+        publisher.publish(envelope)
     except Exception as e:
         traceback.print_exc()
         # todo: handle exception
         pass
 
 
+def get_notification_data(r):
+    """Get notification id from list, extract data by id"""
+    data = r.lpop('notification_topic_list')
+    if data is not None:
+        data = r.get(f'notification_topic_{data.decode("utf-8")}')
+    return data
+
+
 if __name__ == '__main__':
     r = Redis(host=environ.get('REDIS_HOST'), port=environ.get('REDIS_PORT', 6379), db=environ.get('REDIS_DB', 0))
-    sub = r.pubsub(ignore_subscribe_messages=True)
-    sub.subscribe(**{'notification_topic': publish_event})
-    thread = sub.run_in_thread(sleep_time=0.3)
 
     while True:
         try:
-            # wait keyboard interrupt
-            time.sleep(1)
+            data = get_notification_data(r)
+            if data is not None:
+                publish_event(json.loads(data))
+            time.sleep(0.1)
         except KeyboardInterrupt:
             break
-
-    thread.stop()
-    thread.join()
-    sub.close()
