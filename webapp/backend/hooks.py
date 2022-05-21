@@ -2,9 +2,19 @@ from flask import Blueprint, request, jsonify
 from xmltodict import parse
 from mediamanager.objects.video import Entry
 from mediamanager.celery import download
-from celery.execute import send_task
+# from celery.execute import send_task
 
 hooks = Blueprint('hooks', __name__)
+
+
+@hooks.route('/new', methods=['GET'])
+def subscribe():
+    """Accept subscription to pubsubhubbub"""
+    # check mode and return challenge for accept
+    if 'hub.challenge' in request.args:
+        if 'hub.mode' in request.args and request.args['hub.mode'] == 'subscribe':
+            return request.args['hub.challenge'], 200
+    return '', 204
 
 
 @hooks.route('/new', methods=['POST'])
