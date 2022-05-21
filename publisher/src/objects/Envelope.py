@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import List
+from typing import List, Optional
 
 from objects.Recipient import Recipient
 
@@ -10,9 +10,9 @@ class Envelope:
     description: str  # text description (under photo)
     hashtags: List[str]  # separated hashtag for message and audio
     publisher: str  # publisher name for audio
-    photo: str  # path to preview photo file
-    audio: str  # path to audio file
+    audio: str  # path or url to audio file
     recipients: List[Recipient]  # list of recipients
+    photo: Optional[str] = None  # path or url to preview photo file
 
     @classmethod
     def from_json(cls, json):
