@@ -11,4 +11,4 @@ RUN pip install -r requirements.txt
 COPY src/ /app/code/
 WORKDIR /app/code/
 ENV PYTHONUNBUFFERED=1
-CMD ["python", "main.py"]
+CMD ["celery", "--app=publisher", "worker", "--loglevel=INFO"]
