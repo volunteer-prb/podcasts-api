@@ -2,11 +2,9 @@ from datetime import datetime, timedelta
 
 from flask import Blueprint, request, jsonify
 from xmltodict import parse
-from mediamanager.objects.video import Entry
-from mediamanager.celery import download
-# from celery.execute import send_task
-from webapp.backend import db
-from webapp.backend.models.source_channels import SourceChannels
+from app import db, media_manager
+from app.models.source_channels import SourceChannel
+from app.models.video import YoutubeVideo
 
 hooks = Blueprint('hooks', __name__)
 
@@ -15,7 +13,7 @@ hooks = Blueprint('hooks', __name__)
 def subscribe(channel_id: str):
     """Accept subscription to PubSubHubbub"""
     # search source channel in db
-    source_channel = SourceChannels.query.filter_by(channel_id=channel_id).first_or_404()
+    source_channel = SourceChannel.query.filter_by(channel_id=channel_id).first_or_404()
 
     # check request args for required arguments
     for arg in ['hub.lease_seconds', 'hub.mode', 'hub.challenge']:
@@ -62,7 +60,6 @@ def push_notification(channel_id: str):
     if 'feed' not in data or 'entry' not in data['feed']:
         return jsonify({'error': 'Invalid XML'}), 400
     yt_video = data['feed']['entry']
-    entry = Entry(yt_video)
-    download.delay(entry.to_json())
-    # send_task("mediamanager.download", args=[entry.to_json()])
+    entry = YoutubeVideo.from_xml(yt_video)
+    media_manager.send_task('media_manager.download', entry.to_json())
     return jsonify(entry), 200

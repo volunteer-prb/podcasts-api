@@ -1,16 +1,18 @@
 import atexit
 
+from celery import Celery
 from flask import Flask
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
-from mediamanager.objects.encoder import ObjectEncoder
 from os import environ
 from apscheduler.schedulers.background import BackgroundScheduler
 
-from webapp.backend.subscriptions import resubscribe
+from app.encoder import ObjectEncoder
+from app.subscriptions import resubscribe
 
 # init SQLAlchemy so we can use it later in our models
 db = SQLAlchemy()
+media_manager = Celery('media_manager')
 
 
 def create_app():
@@ -25,8 +27,8 @@ def create_app():
     Migrate(app, db)
 
     # blueprint for auth routes in our app
-    from webapp.backend.main import main as main_blueprint
-    from webapp.backend.hooks import hooks as hooks_blueprint
+    from app.main import main as main_blueprint
+    from app.hooks import hooks as hooks_blueprint
 
     app.register_blueprint(main_blueprint)
     app.register_blueprint(hooks_blueprint, url_prefix='/hooks')
