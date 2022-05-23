@@ -42,7 +42,7 @@ services:
     environment:
       TELEGRAM_SERVER: http://telegram-bot-api:8081
       TELEGRAM_TOKEN: <put_bot_token_here>
-      REDIS_HOST: <redis_host>
+      BROKER_URL: redis://<redis_host>
     depends_on:
       - telegram-bot-api
 ```
@@ -56,26 +56,23 @@ docker-compose up --scale publisher=3
 ## Example 
 
 ```python
-import json
-
-from redis import Redis
+from publisher import publish
 
 
 envelope = dict(
     title='Podcasts API Example',
-   description='Project for uploading videos from YouTube as audio podcasts to TG and Soundcloud',
-   hashtags=['volunteer', 'prb', 'media'],
-   publisher='Volunteer PRB',
-   photo='https://file-examples.com/storage/feb04797b46286b5ea5f061/2017/10/file_example_JPG_500kB.jpg',
-   audio='https://file-examples.com/storage/feb04797b46286b5ea5f061/2017/11/file_example_MP3_700KB.mp3',
-   recipients=[
-       dict(
-           _type_ = 'telegram',
-           channel_id=-1000000000000  # replace it by you channel id
-       )
-   ]
+    description='Project for uploading videos from YouTube as audio podcasts to TG and Soundcloud',
+    hashtags=['volunteer', 'prb', 'media'],
+    publisher='Volunteer PRB',
+    photo='https://transfer.sh/get/shqEBi/photo.jpg',
+    audio='https://transfer.sh/get/vYyWP8/audio.mp3',
+    recipients=[
+        dict(
+            _type_='telegram',
+            channel_id=-1000000000000  # replace it by you channel id
+        )
+    ]
 )
 
-r = Redis()
-r.publish('notification_topic', json.dumps(envelope))
+publish.delay(envelope)
 ```
