@@ -14,13 +14,13 @@ docker build -t volunteer-prb/podcasts-api-publisher .
 Local
 ```commandline
 export TELEGRAM_TOKEN=<put_bot_token_here>
-cd src && python main.py
+celery --app=app.publisher --broker=redis://localhost worker --loglevel=INFO
 ```
 
 In docker 
 ```commandline
 docker run -e TELEGRAM_TOKEN=<put_bot_token_here> \
-  -e REDIS_HOST=<redis_host> \
+  -e BROKER_URL=<redis_host> \
   --name publisher --rm \
   volunteer-prb/podcasts-api-publisher
 ```
@@ -56,7 +56,7 @@ docker-compose up --scale publisher=3
 ## Example 
 
 ```python
-from publisher import publish
+from app.publisher import publish
 
 
 envelope = dict(

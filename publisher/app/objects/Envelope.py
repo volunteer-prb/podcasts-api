@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import List, Optional
 
-from objects.Recipient import Recipient
+from app.objects.Recipient import Recipient
 
 
 @dataclass

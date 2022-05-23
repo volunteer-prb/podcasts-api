@@ -1,12 +1,9 @@
-from celery import Celery
-
-from objects.Envelope import Envelope
-from telegram import publisher
-
-app = Celery('publisher', broker='redis://')
+from app import celery
+from app.objects.Envelope import Envelope
+from app.telegram import publisher
 
 
-@app.task()
+@celery.task()
 def publish(data):
     """Publish envelope (topic) to social media by recipients list"""
     envelope = Envelope.from_json(data)

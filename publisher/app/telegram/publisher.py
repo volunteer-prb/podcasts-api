@@ -6,9 +6,9 @@ from os import environ, makedirs
 
 import cv2
 
-from objects.Envelope import Envelope
-from objects.Recipient import TelegramRecipient
-from telegram.telegram_bot_api import TelegramBot
+from app.objects.Envelope import Envelope
+from app.objects.Recipient import TelegramRecipient
+from app.telegram.telegram_bot_api import TelegramBot
 
 TG_MAX_PHOTO_LEN = 1000
 TG_MAX_MESSAGE_LEN = 4000

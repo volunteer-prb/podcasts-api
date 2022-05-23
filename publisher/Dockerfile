@@ -8,7 +8,6 @@ RUN pip install --upgrade pip
 WORKDIR /app
 COPY requirements.txt /app/
 RUN pip install -r requirements.txt
-COPY src/ /app/code/
-WORKDIR /app/code/
+COPY app/ /app/app
 ENV PYTHONUNBUFFERED=1
-CMD ["celery", "--app=publisher", "worker", "--loglevel=INFO"]
+CMD ["celery", "--app=app.publisher", "worker", "--loglevel=INFO"]
