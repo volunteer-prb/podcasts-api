@@ -4,6 +4,10 @@ import requests
 
 
 class TelegramBot:
+    MAX_PHOTO_LEN = 1000
+    MAX_MESSAGE_LEN = 4000
+    MAX_AUDIO_THUMB_SIZE = 320
+
     """
     The Bot API is an HTTP-based interface created for developers keen on building bots for Telegram.
     docs: https://core.telegram.org/bots/api#recent-changes
