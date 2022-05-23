@@ -222,3 +222,89 @@ class TelegramBot:
             args['audio'] = audio
             files = dict(thumb=thumb)
         return self.request('sendAudio', json, files, args)
+
+
+class TelegramBotHelper:
+    @classmethod
+    def split_message(cls, text, first_caption=False, splitter_type=1):
+        """
+        Split big message (or content caption) to telegram partial messages list, considered telegram limitations
+
+        Parameters:
+            text (str): Input message for split
+            first_caption (bool): Message will be used with captured content?
+            splitter_type (int): Character sequence to split input message by blocks:
+                -1) split by chars
+                0) split by space
+                1) split by line (LF char)
+                2) split by paragraph (Two LF chars)
+
+        Returns:
+            tuple[Caption (str|None), Messages (list[str])]
+        """
+        messages = cls._split_message(text, first_caption=first_caption, splitter_type=splitter_type)
+        if first_caption:
+            return messages[0], messages[1:]
+        else:
+            return None, messages
+
+    @classmethod
+    def _split_message(cls, text, first_caption=False, splitter_type=1):
+        """
+        Split big message (or content caption) to telegram partial messages list, considered telegram limitations
+
+        Parameters:
+            text (str): Input message for split
+            first_caption (bool): Message will be used with captured content?
+            splitter_type (int): Character sequence to split input message by blocks:
+                -1) split by chars
+                0) split by space
+                1) split by line (LF char)
+                2) split by paragraph (Two LF chars)
+
+        Returns:
+            Messages list
+        """
+
+        messages = []
+
+        use_caption = lambda: len(messages) == 0 and first_caption
+        max_len = lambda: TelegramBot.MAX_PHOTO_LEN if use_caption() else TelegramBot.MAX_MESSAGE_LEN
+
+        # split by characters
+        if splitter_type == -1:
+            size = TelegramBot.MAX_MESSAGE_LEN
+            return [text[:max_len()]] + [text[i:i+size] for i in range(max_len(), len(text), size)]
+
+        # map splitter by splitter_type
+        if splitter_type == 0:
+            splitter = ' '
+        elif splitter_type == 2:
+            splitter = '\n\n'
+        else:
+            splitter = '\n'
+
+        buffer = ''
+        # split text, check length of buffered partial message with maximum allowed length and
+        # if length is greater flush buffered message to list and reinitialize buffer
+        # if partial is greate then maximum allowed length recursive split it with lower splitter type
+        for partial in text.split(splitter):
+            if (len(buffer) + len(partial) + len(splitter)) < max_len():
+                buffer += splitter + partial
+            else:
+                if len(buffer.strip()) > 0:
+                    messages.append(buffer.strip())
+
+                # if partial more than maximum allowed len, split partial by splitter lower type
+                if len(partial) > max_len():
+                    _messages = cls._split_message(partial, use_caption(), splitter_type=splitter_type - 1)
+                    messages.extend(_messages[:-1])
+                    buffer = _messages[-1]
+                else:
+                    buffer = partial
+
+        # append last buffered partial message to answer
+        if len(buffer) > 0:
+            messages.append(buffer.strip())
+
+        return messages

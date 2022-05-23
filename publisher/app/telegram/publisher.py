@@ -9,7 +9,7 @@ import cv2
 from app import celery, image_utils
 from app.objects.Envelope import EnvelopeBody
 from app.objects.Recipient import TelegramRecipient
-from app.telegram.telegram_bot_api import TelegramBot
+from app.telegram.telegram_bot_api import TelegramBot, TelegramBotHelper
 
 
 @celery.task()
@@ -24,19 +24,7 @@ def publish(envelope: EnvelopeBody, recipient: TelegramRecipient):
            f'{envelope.description}\n\n' \
            f'{hashtags}'
 
-    # split big text description to telegram partial message
-    caption = ''
-    messages = []
-    msg = ''
-    for paragraph in text.split('\n'):
-        if (len(msg) + len(paragraph)) < (tb.MAX_MESSAGE_LEN if len(messages) > 0 else tb.MAX_PHOTO_LEN):
-            msg += '\n' + paragraph
-        else:
-            messages.append(msg.strip())
-            msg = paragraph
-    if len(msg) > 0:
-        messages.append(msg.strip())
-
+    # create temporary directory for file manipulation
     tmpdir = f'/tmp/{str(uuid.uuid4())}'
     makedirs(tmpdir, exist_ok=True)
 
@@ -51,9 +39,6 @@ def publish(envelope: EnvelopeBody, recipient: TelegramRecipient):
         # create thumbnail for audio
         photo = cv2.imread(photo)
         thumb = image_utils.resize_max(photo, tb.MAX_AUDIO_THUMB_SIZE)
-
-        caption = messages[0]
-        messages = messages[1:]
     else:
         thumb = None
 
@@ -64,6 +49,9 @@ def publish(envelope: EnvelopeBody, recipient: TelegramRecipient):
         audio = open(filename, 'rb')
     else:
         audio = open(audio, 'rb')
+
+    # split big text description to telegram partial message
+    caption, messages = TelegramBotHelper.split_message(text, first_caption=(photo is not None), splitter_type=1)
 
     # first send photo message
     if photo is not None:
