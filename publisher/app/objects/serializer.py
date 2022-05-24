@@ -9,6 +9,7 @@ __dataclasses__ = [Envelope, EnvelopeBody, Recipient, TelegramRecipient]
 
 
 class DataclassEncoder(json.JSONEncoder):
+    """Dataclass JSON serializer"""
     def default(self, obj):
         if dataclasses.is_dataclass(obj):
             return self._dataclass_encoder(obj)
@@ -28,6 +29,12 @@ class DataclassEncoder(json.JSONEncoder):
 
 
 def dataclass_decoder(obj):
+    """
+    Dataclass JSON deserializer
+
+    Returns:
+        Dataclass object or dict
+    """
     if isinstance(obj, dict) and '_type_' in obj:
         if obj['_type_'] == '__datetime__':
             return datetime.datetime.fromisoformat(obj['value'])
@@ -40,8 +47,10 @@ def dataclass_decoder(obj):
 
 
 def dumps(obj):
+    """Serializer obj to JSON formatted string"""
     return json.dumps(obj, cls=DataclassEncoder)
 
 
 def loads(obj):
+    """Deserialize JSON formatted string to a dataclass or Python object"""
     return json.loads(obj, object_hook=dataclass_decoder)

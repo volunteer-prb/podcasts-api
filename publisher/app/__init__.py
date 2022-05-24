@@ -7,6 +7,6 @@ register(
     'json',
     serializer.dumps,
     serializer.loads,
-    content_type='application/json'
+    content_type='application/json',
 )
 celery = Celery('publisher', broker='redis://')
