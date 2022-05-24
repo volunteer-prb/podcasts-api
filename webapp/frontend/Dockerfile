@@ -9,8 +9,6 @@ COPY . /app
 
 RUN node_modules/.bin/ng build
 
-
 FROM docker.io/nginx:1.21.6
 
 COPY --from=build /app/dist /usr/share/nginx/html
-
