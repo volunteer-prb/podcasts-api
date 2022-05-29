@@ -30,7 +30,7 @@ def publish(envelope: EnvelopeBody, recipient: TelegramRecipient):
 
     # download photo if url passed, make thumb
     photo = envelope.photo
-    if photo is not None:
+    if photo:
         if photo.startswith('http'):
             filename = f'{tmpdir}/{str(uuid.uuid4())}'
             urlretrieve(photo, filename)

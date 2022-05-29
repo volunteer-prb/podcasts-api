@@ -1,4 +1,4 @@
-from urllib.parse import quote_plus
+import json
 
 import requests
 
@@ -10,7 +10,11 @@ def dict_filter(obj):
     """
     if obj is None:
         return dict()
-    return dict([(k, v) for k, v in obj.items() if v is not None])
+    return dict([(k, v) for k, v in obj.items() if v])
+
+
+class TelegramBotError(Exception):
+    pass
 
 
 class TelegramBot:
@@ -30,32 +34,35 @@ class TelegramBot:
         self.__server = server
         self.__token = token
 
-    def request(self, method_name, json=None, files=None, args=None):
-        """Send request to telegram api server
-        :return None if request finished with error or telegram does not return 'result' in response json
-        :return 'result' section from response json if ok
+    def request(self, method_name, json_body=None, files=None, args=None):
         """
-        if files is not None:
-            if json is not None and args is not None:
-                args = {**json, **args}
+        Send request to telegram api server
+        Docs: https://core.telegram.org/bots/api#making-requests
+
+        Returns:
+            `result` section from response json if ok or raise TelegramBotError or HTTPError
+        """
+
+        if files:
+            if json_body and args:
+                args = {**json_body, **args}
             elif args is None:
-                args = json
-            json = dict()
-        if json is None:
-            json = dict()
-        args = '&'.join([
-            f'{k}={quote_plus(str(v))}' for k, v in dict_filter(args).items()
-        ])
+                args = json_body
+            json_body = dict()
+
         response = requests.post(
-            url=f'{self.__server}/bot{self.__token}/{method_name}?{args}',
-            json=dict_filter(json),
+            url=f'{self.__server}/bot{self.__token}/{method_name}',
+            data=dict_filter(args),
+            json=dict_filter(json_body),
             files=files,
         )
-        if response.status_code == 200 and (json := response.json()) is not None \
-                and 'ok' in json and json['ok'] is True and 'result' in json:
-            return json['result']
-        else:
-            return None
+        try:
+            if not response.json().get('ok'):
+                raise TelegramBotError(response.json().get('description'))
+            return response.json().get('result')
+        except json.decoder.JSONDecodeError:
+            response.raise_for_status()
+            raise TelegramBotError('Not JSON response')
 
     def set_webhook(self, url, certificate=None, ip_address=None, max_connections=None, allowed_updates=None,
                     drop_pending_updates=None):
@@ -104,7 +111,7 @@ class TelegramBot:
         Returns:
             True on success.
         """
-        return self.request('setWebhook', json=dict(
+        return self.request('setWebhook', json_body=dict(
             url=url,
             certificate=certificate,
             ip_address=ip_address,
@@ -124,7 +131,7 @@ class TelegramBot:
         Returns:
             True on success.
         """
-        return self.request('deleteWebhook', json=dict(
+        return self.request('deleteWebhook', json_body=dict(
             drop_pending_updates=drop_pending_updates
         ))
 
@@ -172,7 +179,7 @@ class TelegramBot:
         Returns:
             On success, the sent Message is returned.
         """
-        return self.request('sendMessage', json=dict(
+        return self.request('sendMessage', json_body=dict(
             chat_id=chat_id,
             text=text,
             parse_mode=parse_mode,
@@ -389,8 +396,11 @@ class TelegramBotHelper:
 
         messages = []
 
-        use_caption = lambda: len(messages) == 0 and first_caption
-        max_len = lambda: TelegramBot.MAX_CAPTION_LEN if use_caption() else TelegramBot.MAX_MESSAGE_LEN
+        def use_caption():
+            return len(messages) == 0 and first_caption
+
+        def max_len():
+            return TelegramBot.MAX_CAPTION_LEN if use_caption() else TelegramBot.MAX_MESSAGE_LEN
 
         # split by characters
         if splitter_type == -1:
@@ -413,8 +423,9 @@ class TelegramBotHelper:
             if (len(buffer) + len(partial) + len(splitter)) < max_len():
                 buffer += splitter + partial
             else:
-                if len(buffer.strip()) > 0:
-                    messages.append(buffer.strip())
+                _trimmed_buffer = buffer.strip()
+                if _trimmed_buffer:
+                    messages.append(_trimmed_buffer)
 
                 # if partial more than maximum allowed len, split partial by splitter lower type
                 if len(partial) > max_len():
@@ -425,7 +436,8 @@ class TelegramBotHelper:
                     buffer = partial
 
         # append last buffered partial message to answer
-        if len(buffer) > 0:
-            messages.append(buffer.strip())
+        _trimmed_buffer = buffer.strip()
+        if _trimmed_buffer:
+            messages.append(_trimmed_buffer)
 
         return messages
