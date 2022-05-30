@@ -1,5 +1,5 @@
 import pytest
-from webapp.backend import create_app
+from app import create_app
 from mediamanager.celery import celery
 
 xml_examp = '''<feed xmlns:yt="http://www.youtube.com/xml/schemas/2015"
