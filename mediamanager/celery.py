@@ -11,7 +11,7 @@ celery.conf.update(
     timezone='Europe/Paris',
     enable_utc=True,
     result_persistent=True,
-    ignore_result=False
+    ignore_result=False,
 )
 
 
