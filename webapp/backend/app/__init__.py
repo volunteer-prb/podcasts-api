@@ -1,18 +1,13 @@
 import atexit
 
-from celery import Celery
-from flask import Flask
+from flask import Flask, request, g
 from flask_migrate import Migrate
-from flask_sqlalchemy import SQLAlchemy
 from os import environ
 from apscheduler.schedulers.background import BackgroundScheduler
 
 from app.encoder import ObjectEncoder
-from app.subscriptions import resubscribe
-
-# init SQLAlchemy so we can use it later in our models
-db = SQLAlchemy()
-media_manager = Celery('media_manager')
+from app.celery.pubsubhubbub import resubscribe
+from app.models import db
 
 
 def create_app():
@@ -26,12 +21,32 @@ def create_app():
 
     Migrate(app, db)
 
+    @app.before_request
+    def app_context():
+        # Properties for SQLAlchemy REST extension
+        g.per_page = int(request.args.get('per_page', 20))
+        g.page = int(request.args.get('page', 1))
+        filter_type = request.args.get('filter_type', 'and')
+        filter_by = dict((k[len('filter_by_'):], v) for k, v in request.args.items()
+                         if k.startswith('filter_by_') and len(k) > len('filter_by_'))
+        order_by = dict((k[len('order_by_'):], v) for k, v in request.args.items()
+                        if k.startswith('order_by_') and len(k) > len('order_by_'))
+        g.complex_query = dict(
+            filter_type=filter_type,
+            filter_by=filter_by,
+            order_by=order_by
+        )
+        g.includes = list(k[len('include_'):] for k, v in request.args.items()
+                          if k.startswith('include_') and len(k) > len('include_'))
+
     # blueprint for auth routes in our app
-    from app.main import main as main_blueprint
-    from app.hooks import hooks as hooks_blueprint
+    from app.endpoints.main import main as main_blueprint
+    from app.endpoints.hooks import hooks as hooks_blueprint
+    from app.endpoints.channels import channels as channels_blueprint
 
     app.register_blueprint(main_blueprint)
     app.register_blueprint(hooks_blueprint, url_prefix='/hooks')
+    app.register_blueprint(channels_blueprint, url_prefix='/channels')
 
     scheduler = BackgroundScheduler()
     scheduler.add_job(func=resubscribe, trigger="interval", seconds=60)

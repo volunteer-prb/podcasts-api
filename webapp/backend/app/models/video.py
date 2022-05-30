@@ -20,7 +20,7 @@ from app.models.mixins import TimestampMixin
 class YoutubeVideo(TimestampMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     yt_id = db.Column(db.String, nullable=False)
-    channel_id = db.Column(db.String, db.ForeignKey('source_channel.channel_id'), nullable=False)
+    channel_id = db.Column(db.Integer, db.ForeignKey('source_channel.id'), nullable=False)
     channel = db.relationship('SourceChannel', backref=db.backref('videos', lazy=True), lazy='joined')
     title = db.Column(db.String, nullable=False)
     link = db.Column(db.String, nullable=False)

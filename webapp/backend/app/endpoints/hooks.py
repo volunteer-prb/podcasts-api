@@ -2,7 +2,9 @@ from datetime import datetime, timedelta
 
 from flask import Blueprint, request, jsonify
 from xmltodict import parse
-from app import db, media_manager
+
+from app.celery import media_manager
+from app.models import db
 from app.models.source_channels import SourceChannel
 from app.models.video import YoutubeVideo
 

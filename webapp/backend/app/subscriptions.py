@@ -1,2 +1,0 @@
-def resubscribe():
-    print('resubscribe')
