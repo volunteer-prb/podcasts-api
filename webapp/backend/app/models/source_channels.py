@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import flask_sqlalchemy_extension.model as ext
 
 from app import db
@@ -14,4 +16,4 @@ class SourceChannel(TimestampMixin, ext.SerializeMixin, ext.DeserializeMixin, ex
     # mode subscribe or unsubscribe
     pubsubhubbub_mode = db.Column(db.String, nullable=False)
     # subscribe expires date (need to refresh before expire)
-    pubsubhubbub_expires_at = db.Column(db.DateTime, nullable=False)
+    pubsubhubbub_expires_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
