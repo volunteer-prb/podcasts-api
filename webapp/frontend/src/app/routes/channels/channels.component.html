@@ -1,0 +1,23 @@
+
+<div class="table-responsive px-2 mt-3">
+  <table class="table table-sm">
+    <thead>
+    <tr class="align-middle">
+      <th>Channel title</th>
+      <th>Subscribe mode</th>
+    </tr>
+    </thead>
+    <tbody>
+    <ng-container *ngFor="let item of items">
+      <tr>
+        <td>Test</td>
+        <td>test</td>
+      </tr>
+    </ng-container>
+    </tbody>
+  </table>
+
+  <div *ngIf="items.length == 0" class="alert alert-warning">Records not found</div>
+</div>
+
+<app-pagination [pagination]="pagination" (getPage)="gotoPage($event.page)"></app-pagination>
