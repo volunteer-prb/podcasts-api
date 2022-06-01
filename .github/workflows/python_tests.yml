@@ -1,0 +1,29 @@
+name: 'Build & Test Pipeline'
+
+on:
+  pull_request:
+    branches:
+    - master
+
+jobs:
+  base:
+    name: 'Base'
+    runs-on: ubuntu-latest
+    steps:
+    # Checkout the repository to the GitHub Actions runner
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Setup Python
+      uses: actions/setup-python@v3
+      with:
+        python-version: '3.7'
+        architecture: 'x64'
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Print info
+      run: |
+        echo "Running pipeline for PR-${{ github.event.number }}"
+    - name: Pull dependencies
+      run: pip install -r requirements.txt
+    - name: Run tests
+      run: pytest
