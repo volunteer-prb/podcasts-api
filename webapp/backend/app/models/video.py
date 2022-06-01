@@ -32,14 +32,14 @@ class YoutubeVideo(TimestampMixin, db.Model):
     @classmethod
     def from_xml(cls, xml):
         return YoutubeVideo(
-            yt_id = xml['yt:videoId'],
-            channel_id = xml['yt:channelId'],
-            title = xml['title'],
-            link = xml['link']['@href'],
-            author = xml['author']['name'],
-            uri = xml['author']['uri'],
-            yt_published = xml['published'],
-            yt_updated = xml['updated']
+            yt_id=xml['yt:videoId'],
+            channel_id=xml['yt:channelId'],
+            title=xml['title'],
+            link=xml['link']['@href'],
+            author=xml['author']['name'],
+            uri=xml['author']['uri'],
+            yt_published=xml['published'],
+            yt_updated=xml['updated'],
         )
 
     def to_json(self):

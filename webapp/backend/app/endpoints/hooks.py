@@ -63,5 +63,5 @@ def push_notification(channel_id: str):
         return jsonify({'error': 'Invalid XML'}), 400
     yt_video = data['feed']['entry']
     entry = YoutubeVideo.from_xml(yt_video)
-    media_manager.send_task('media_manager.download', entry.to_json())
+    media_manager.send_task('media_manager.download', (entry.to_json(),))
     return jsonify(entry), 200
