@@ -1,0 +1,86 @@
+.navbar {
+  padding: 0;
+
+  .navbar-header {
+    height: 3.5em;
+  }
+
+  .nav-item a {
+    text-decoration: none;
+
+    i {
+      width: 4rem;
+      text-align: center;
+      flex-shrink: 0;
+    }
+  }
+}
+
+.link-disabled {
+  display: block;
+  padding: 0.5rem 0;
+  text-decoration: underline;
+  text-decoration-style: dashed;
+  text-decoration-thickness: 1px;
+  color: var(--bs-gray-500);
+}
+
+.offcanvas-backdrop {
+  background: rgba(0, 0, 0, 0);
+  z-index: 1044;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  backdrop-filter: blur(0);
+  animation: modal-backdrop 0.5s ease forwards;
+
+  &.close {
+    animation: modal-backdrop-remove 0.5s ease forwards;
+  }
+}
+
+.offcanvas {
+  visibility: visible!important;
+
+  &.offcanvas-start {
+    width: 4em;
+    transform: none;
+  }
+
+  &.show {
+    transform: none;
+    width: 25em;
+    transition: 0.4s all ease;
+  }
+
+  .offcanvas-header {
+    padding: 0;
+
+    a {
+      font-size: 3em;
+      width: 4rem;
+      text-align: center;
+      cursor: pointer;
+    }
+  }
+
+  .offcanvas-body {
+    padding: 0;
+    overflow-x: hidden;
+
+    &::-webkit-scrollbar {
+      width: 0;
+    }
+  }
+}
+
+.close {
+  padding: 0;
+  transition: 0.4s all ease;
+}
+
+.router-outlet-wrapper {
+  margin-left: 4em;
+  height: calc(100% - 3.5em);
+}
