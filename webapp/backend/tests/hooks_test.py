@@ -93,7 +93,8 @@ def test_hooks(client, celery_app):
 
 
 @pytest.mark.parametrize("mode, channel_id", [('subscribe', 'pytest_channel_sub_id'),
-                                              ('unsubscribe', 'pytest_channel_unsub_id')])
+                                              ('unsubscribe', 'pytest_channel_unsub_id'),
+                                              ])
 def test_hook_subscribe_good(client, mode, channel_id):
     resp = client.get(f'/hooks/new/{channel_id}', query_string={
         'hub.lease_seconds': 4000,
@@ -104,10 +105,11 @@ def test_hook_subscribe_good(client, mode, channel_id):
     assert resp.data == b'qwerty'
 
 
-@pytest.mark.parametrize("status_code, mode, channel_id, lease_seconds",
-                         [(404, 'subscribe', 'pytest_channel_notfound_id', 100),
+@pytest.mark.parametrize("status_code, mode, channel_id, lease_seconds", [
+                          (404, 'subscribe', 'pytest_channel_notfound_id', 100),
                           (400, 'unsubscribe', 'pytest_channel_unsub_id', None),
-                          (204, 'subscribe', 'pytest_channel_unsub_id', 100)])
+                          (204, 'subscribe', 'pytest_channel_unsub_id', 100),
+                          ])
 def test_hook_subscribe_error(client, status_code, mode, channel_id, lease_seconds):
     resp = client.get(f'/hooks/new/{channel_id}', query_string={
         'hub.lease_seconds': lease_seconds,
