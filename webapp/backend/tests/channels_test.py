@@ -3,7 +3,14 @@ import pytest
 from flask_migrate import init, migrate, upgrade
 
 from app import create_app, db
+from app.celery import celery as _celery
 from app.models.source_channels import SourceChannel
+
+
+@pytest.fixture(scope='module')
+def celery(request):
+    _celery.conf.update(broker_url='memory://localhost/', task_always_eager=True)
+    return _celery
 
 
 @pytest.fixture()
@@ -47,7 +54,7 @@ def app(tmpdir):
 
 
 @pytest.fixture()
-def client(app):
+def client(app, celery):
     return app.test_client()
 
 

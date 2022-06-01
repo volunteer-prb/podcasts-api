@@ -1,9 +1,11 @@
+from unittest.mock import patch
+
 import pytest
 
 from flask_migrate import init, migrate, upgrade
 
 from app import create_app, db
-from app.celery import celery
+from app.celery import media_manager as _media_manager, celery as _celery
 from app.models.source_channels import SourceChannel
 
 xml_example = '''<feed xmlns:yt="http://www.youtube.com/xml/schemas/2015"
@@ -29,9 +31,15 @@ xml_example = '''<feed xmlns:yt="http://www.youtube.com/xml/schemas/2015"
 
 
 @pytest.fixture(scope='module')
-def celery_app(request):
-    celery.conf.update(task_always_eager=True)
-    return celery
+def media_manager(request):
+    _media_manager.conf.update(broker_url='memory://localhost/', task_always_eager=True)
+    return _media_manager
+
+
+@pytest.fixture(scope='module')
+def celery(request):
+    _celery.conf.update(broker_url='memory://localhost/', task_always_eager=True)
+    return _celery
 
 
 @pytest.fixture()
@@ -75,7 +83,7 @@ def app(tmpdir):
 
 
 @pytest.fixture()
-def client(app):
+def client(app, media_manager):
     return app.test_client()
 
 
@@ -84,7 +92,7 @@ def runner(app):
     return app.test_cli_runner()
 
 
-def test_hooks(client, celery_app):
+def test_hooks(client):
     resp = client.post('/hooks/new/CHANNEL_ID_PYTEST', data=xml_example)
     assert resp.status_code == 200
     assert resp.is_json is True
