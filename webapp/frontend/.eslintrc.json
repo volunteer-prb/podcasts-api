@@ -19,7 +19,7 @@
         "import/prefer-default-export": "off",
         "import/no-extraneous-dependencies": "off",
         "import/extensions": "off",
-        "max-len": ["error", { "code": 100 }],
+        "max-len": ["error", { "code": 120 }],
         "lines-between-class-members": "error",
         "@typescript-eslint/unbound-method": [
           "error",
