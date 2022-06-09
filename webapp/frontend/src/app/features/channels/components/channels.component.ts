@@ -16,7 +16,7 @@ export class ChannelsComponent implements OnInit {
 
   constructor(
     private channelsService: ChannelsService,
-    private logger: LoggerService
+    private logger: LoggerService,
   ) {}
 
   ngOnInit(): void {

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Toast } from './shared/core/toast';
-import { LoggerService } from './shared/services/logger.service';
+import { Toast } from '@shared/core/toast';
+import { LoggerService } from '@shared/services/logger.service';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs';
 
@@ -41,7 +41,9 @@ export class AppComponent implements OnInit {
     return this._showNavDelayed;
   }
 
-  navItems = [new NavItem('Source channels', ['channels'], 'bi-broadcast')];
+  navItems = [
+    new NavItem('Source channels', ['channels'], 'bi-broadcast'),
+  ];
   currentNav: string[] | undefined = [];
 
   toasts: Toast[] = [];
@@ -49,7 +51,7 @@ export class AppComponent implements OnInit {
   constructor(
     private logger: LoggerService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
   ) {}
 
   ngOnInit(): void {
