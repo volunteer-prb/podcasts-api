@@ -1,5 +1,4 @@
 from celery import Celery
-from mediamanager.objects.video import Entry
 
 broker_url = 'amqp://guest@localhost:8080//'
 
@@ -13,13 +12,3 @@ celery.conf.update(
     result_persistent=True,
     ignore_result=False,
 )
-
-
-def _download(video: Entry):
-    print('Downloading {}'.format(video.title))
-    return True
-
-
-@celery.task
-def download(video: Entry):
-    _download(video)
