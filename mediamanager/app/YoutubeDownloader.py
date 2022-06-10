@@ -20,7 +20,7 @@ class YoutubeDownloader:
             ],
             writethumbnail=True,
             keepvideo=True,
-            windowsfilenames=True
+            windowsfilenames=True,
         )
 
     def playlist(self, url, playlistend=-1, override_opts=None):
