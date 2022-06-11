@@ -3,9 +3,9 @@ import datetime
 import json
 
 from app.objects.download_task import DownloadTask
-from app.objects.entry import Entry, Files, ImageFile, AudioFile
+from app.objects.entry import Entry, Files, ImageFile, AudioFile, Channel
 
-__dataclasses__ = [Entry, Files, ImageFile, AudioFile, DownloadTask]
+__dataclasses__ = [Entry, Files, ImageFile, AudioFile, Channel, DownloadTask]
 
 
 class DataclassEncoder(json.JSONEncoder):

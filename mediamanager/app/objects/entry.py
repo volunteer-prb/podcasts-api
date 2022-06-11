@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import List
 
 
 @dataclass
@@ -8,7 +9,7 @@ class Files:
 
 @dataclass
 class AudioFile(Files):
-    pass
+    duration: int
 
 
 @dataclass
@@ -17,12 +18,19 @@ class ImageFile(Files):
 
 
 @dataclass
+class Channel:
+    id: str
+    title: str
+    url: str
+
+
+@dataclass
 class Entry:
     id: str
-    channel_id: str
-    author: str
     title: str
     description: str
     url: str
+    tags: List[str]
+    channel: Channel
     audio: AudioFile
     image: ImageFile
