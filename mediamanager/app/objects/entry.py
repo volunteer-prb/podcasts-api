@@ -19,6 +19,7 @@ class ImageFile(Files):
 @dataclass
 class Entry:
     id: str
+    channel_id: str
     author: str
     title: str
     description: str

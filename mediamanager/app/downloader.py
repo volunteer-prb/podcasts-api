@@ -13,7 +13,22 @@ def download(task: DownloadTask):
 
 
 def _download(task: DownloadTask):
+    """
+    Download youtube audio by video link and place info to database.
+    Check source channel id and task channel id
+
+    Returns:
+        Entry video
+    """
     yt = YoutubeDownloader(environ.get('DOWNLOAD_PATH', f'/tmp/{str(uuid4())}'))
+    # First download only meta information, such like channel id
+    info, files = yt.download(task.url, download=False)
+
+    _channel_id = info['channel_id']
+    if _channel_id != task.channel_id:
+        raise Exception(f'Entry channel id {_channel_id} does not match task channel id {task.channel_id}')
+
+    # Second download files and meta information
     info, files = yt.download(task.url)
 
     audio = None
@@ -25,6 +40,7 @@ def _download(task: DownloadTask):
     _id = info['id']
     entry = Entry(
         id=_id,
+        channel_id=info['channel_id'],
         author=info['channel'],
         title=info['title'],
         description=info['description'],
