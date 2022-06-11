@@ -13,6 +13,8 @@ class SourceChannel(TimestampMixin, ext.SerializeMixin, ext.DeserializeMixin, ex
     title = db.Column(db.String, nullable=False)
     # youtube channel ID (part of URL)
     channel_id = db.Column(db.String, nullable=False)
+    # youtube channel url
+    uri = db.Column(db.String, nullable=True)
     # mode subscribe or unsubscribe
     pubsubhubbub_mode = db.Column(db.String, nullable=False)
     # subscribe expires date (need to refresh before expire)
