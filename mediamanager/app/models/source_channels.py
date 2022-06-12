@@ -7,7 +7,7 @@ from app.models.mixins import TimestampMixin
 
 
 class SourceChannel(TimestampMixin, Base):
-    __tablename__ = 'source_channel'
+    __tablename__ = 'source_channels'
 
     # inner primary key
     id = Column(Integer, primary_key=True)

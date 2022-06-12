@@ -15,15 +15,17 @@
 """
 from app import db
 from app.models.mixins import TimestampMixin
+from app.models.files import File
 
 
 class YoutubeVideo(TimestampMixin, db.Model):
+    __tablename__ = 'youtube_videos'
+
     id = db.Column(db.Integer, primary_key=True)
     yt_id = db.Column(db.String, nullable=False)
-    channel_id = db.Column(db.Integer, db.ForeignKey('source_channel.id'), nullable=False)
+    channel_id = db.Column(db.Integer, db.ForeignKey('source_channels.id'), nullable=False)
     channel = db.relationship('SourceChannel', backref=db.backref('videos', lazy=True), lazy='joined')
     title = db.Column(db.String, nullable=False)
-    description = db.Column(db.Text, nullable=True)
     uri = db.Column(db.String, nullable=False)
     yt_published = db.Column(db.DateTime, nullable=False)
     yt_updated = db.Column(db.DateTime, nullable=False)
@@ -53,3 +55,26 @@ class YoutubeVideo(TimestampMixin, db.Model):
             'yt_published': self.yt_published,
             'yt_updated': self.yt_updated,
         }
+
+
+class RecordTag(db.Model):
+    __tablename__ = 'record_tags'
+
+    id = db.Column(db.Integer, primary_key=True)
+    text = db.Column(db.String, nullable=False)
+    record_id = db.Column(db.Integer, db.ForeignKey('records.id'), nullable=False)
+    record = db.relationship('Record', backref=db.backref('tags', lazy=False), lazy='joined')
+
+
+class Record(TimestampMixin, db.Model):
+    __tablename__ = 'records'
+
+    id = db.Column(db.Integer, primary_key=True)
+    youtube_video_id = db.Column(db.Integer, db.ForeignKey('youtube_videos.id'), nullable=False)
+    youtube_video = db.relationship('YoutubeVideo', backref=db.backref('records', lazy=True), lazy='joined')
+    title = db.Column(db.String, nullable=False)
+    descriptions = db.Column(db.String, nullable=False)
+    audio_id = db.Column(db.Integer, db.ForeignKey('files.id'), nullable=True)
+    audio = db.relationship('File', backref=db.backref('records', lazy=True), lazy='joined')
+    image_id = db.Column(db.Integer, db.ForeignKey('files.id'), nullable=True)
+    image = db.relationship('File', backref=db.backref('records', lazy=True), lazy='joined')

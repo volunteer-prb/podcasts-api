@@ -7,8 +7,9 @@ from sqlalchemy.orm import Session
 from app import celery
 from app.YoutubeDownloader import YoutubeDownloader
 from app.models import db
+from app.models.files import FileUriType
 from app.models.source_channels import SourceChannel
-from app.models.video import YoutubeVideo
+from app.models.video import YoutubeVideo, Record, RecordTag
 from app.objects.download_task import DownloadTask
 from app.objects.entry import Entry, AudioFile, ImageFile, Channel
 
@@ -68,24 +69,56 @@ def _download(task: DownloadTask):
 
 
 def _save_entry(entry: Entry):
+    """
+    Query channel (by channel_id) and video (by yt_id) from database,
+    update video information from entry, save updates
+    """
     with Session(db) as session:
         channel = session.query(SourceChannel).filter_by(channel_id=entry.channel.id).first()
         if not channel:
             raise Exception(f'Source channel {entry.channel.id} does not found in database')
 
+        # Try query video from database by Youtube ID, if does not found create new
         video = session.query(YoutubeVideo).filter_by(yt_id=entry.id, channel=channel).first()
 
         if not video:
             video = YoutubeVideo(
                 yt_id=entry.id,
+                title=entry.title,
                 channel=channel,
                 uri=entry.url,
                 yt_published=datetime.now(),  # yt_dlp does not provide this information
                 yt_updated=datetime.now(),  # yt_dlp does not provide this information
             )
+            session.add(video)
 
-        video.title = entry.title
-        video.description = entry.description
+        from app.models import files
 
-        session.add(video)
+        # Save record information
+        audio = None
+        if entry.audio:
+            audio = files.AudioFile(
+                uri=entry.audio.uri,
+                uri_type=FileUriType.file,
+                duration_secs=entry.audio.duration,
+            )
+
+        record = Record(
+            youtube_video=video,
+            title=entry.title,
+            descriptions=entry.description,
+            audio=audio,
+            image=files.File(
+                uri=entry.image.uri,
+                uri_type=FileUriType.global_link,
+            ),
+        )
+        for _tag in entry.tags:
+            tag = RecordTag(
+                text=_tag,
+                record=record,
+            )
+            session.add(tag)
+
+        session.add(record)
         session.commit()

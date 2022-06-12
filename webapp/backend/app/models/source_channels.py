@@ -7,6 +7,8 @@ from app.models.mixins import TimestampMixin
 
 
 class SourceChannel(TimestampMixin, ext.SerializeMixin, ext.DeserializeMixin, ext.QueryMixin, db.Model):
+    __tablename__ = 'source_channels'
+
     # inner DB primary key
     id = db.Column(db.Integer, primary_key=True)
     # youtube channel title

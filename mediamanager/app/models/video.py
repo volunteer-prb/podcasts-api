@@ -21,27 +21,36 @@ from app.models.mixins import TimestampMixin
 
 
 class YoutubeVideo(TimestampMixin, Base):
-    __tablename__ = 'youtube_video'
+    __tablename__ = 'youtube_videos'
 
     id = Column(Integer, primary_key=True)
     yt_id = Column(String, nullable=False)
-    channel_id = Column(Integer, ForeignKey('source_channel.id'), nullable=False)
+    channel_id = Column(Integer, ForeignKey('source_channels.id'), nullable=False)
     channel = relationship('SourceChannel', backref=backref('videos', lazy=True), lazy='joined')
     title = Column(String, nullable=False)
-    description = Column(Text, nullable=True)
     uri = Column(String, nullable=False)
     yt_published = Column(DateTime, nullable=False)
     yt_updated = Column(DateTime, nullable=False)
 
-    def to_json(self):
-        return {
-            'id': self.id,
-            'yt_id': self.yt_id,
-            'channel_id': self.channel_id,
-            'title': self.title,
-            'link': self.link,
-            'author': self.author,
-            'uri': self.uri,
-            'yt_published': self.yt_published,
-            'yt_updated': self.yt_updated,
-        }
+
+class RecordTag(Base):
+    __tablename__ = 'record_tags'
+
+    id = Column(Integer, primary_key=True)
+    text = Column(String, nullable=False)
+    record_id = Column(Integer, ForeignKey('records.id'), nullable=False)
+    record = relationship('Record', backref=backref('tags', lazy=False), lazy='joined')
+
+
+class Record(TimestampMixin, Base):
+    __tablename__ = 'records'
+
+    id = Column(Integer, primary_key=True)
+    youtube_video_id = Column(Integer, ForeignKey('youtube_videos.id'), nullable=False)
+    youtube_video = relationship('YoutubeVideo', backref=backref('records', lazy=True), lazy='joined')
+    title = Column(String, nullable=False)
+    descriptions = Column(String, nullable=False)
+    audio_id = Column(Integer, ForeignKey('files.id'), nullable=True)
+    audio = relationship('File', foreign_keys=[audio_id], backref=backref('audio_records', lazy=True), lazy='joined')
+    image_id = Column(Integer, ForeignKey('files.id'), nullable=True)
+    image = relationship('File', foreign_keys=[image_id], backref=backref('image_records', lazy=True), lazy='joined')
