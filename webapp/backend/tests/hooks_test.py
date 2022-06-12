@@ -17,7 +17,7 @@ xml_example = '''<feed xmlns:yt="http://www.youtube.com/xml/schemas/2015"
                 <entry>
                     <id>yt:video:VIDEO_ID</id>
                     <yt:videoId>VIDEO_ID_PYTEST</yt:videoId>
-                    <yt:channelId>CHANNEL_ID</yt:channelId>
+                    <yt:channelId>pytest_channel_sub_id</yt:channelId>
                     <title>Video title</title>
                     <link rel="alternate" href="http://www.youtube.com/watch?v=VIDEO_ID"/>
                     <author>
@@ -93,7 +93,7 @@ def runner(app):
 
 
 def test_hooks(client):
-    resp = client.post('/hooks/new/CHANNEL_ID_PYTEST', data=xml_example)
+    resp = client.post('/hooks/new/pytest_channel_sub_id', data=xml_example)
     assert resp.status_code == 200
     assert resp.is_json is True
     assert resp.json['status'] == 'success'

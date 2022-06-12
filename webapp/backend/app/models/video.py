@@ -16,6 +16,7 @@
 from app import db
 from app.models.mixins import TimestampMixin
 from app.models.files import File
+from app.models.source_channels import SourceChannel
 
 
 class YoutubeVideo(TimestampMixin, db.Model):
@@ -32,13 +33,12 @@ class YoutubeVideo(TimestampMixin, db.Model):
 
     @classmethod
     def from_xml(cls, xml):
+        channel = SourceChannel.query.filter_by(channel_id=xml['yt:channelId']).first()
         return YoutubeVideo(
             yt_id=xml['yt:videoId'],
-            channel_id=xml['yt:channelId'],
+            channel=channel,
             title=xml['title'],
-            link=xml['link']['@href'],
-            author=xml['author']['name'],
-            uri=xml['author']['uri'],
+            uri=xml['link']['@href'],
             yt_published=xml['published'],
             yt_updated=xml['updated'],
         )
@@ -49,8 +49,6 @@ class YoutubeVideo(TimestampMixin, db.Model):
             'yt_id': self.yt_id,
             'channel_id': self.channel_id,
             'title': self.title,
-            'link': self.link,
-            'author': self.author,
             'uri': self.uri,
             'yt_published': self.yt_published,
             'yt_updated': self.yt_updated,
@@ -75,6 +73,6 @@ class Record(TimestampMixin, db.Model):
     title = db.Column(db.String, nullable=False)
     descriptions = db.Column(db.String, nullable=False)
     audio_id = db.Column(db.Integer, db.ForeignKey('files.id'), nullable=True)
-    audio = db.relationship('File', backref=db.backref('records', lazy=True), lazy='joined')
+    audio = db.relationship('File', foreign_keys=[audio_id], backref=db.backref('audio_records', lazy=True), lazy='joined')
     image_id = db.Column(db.Integer, db.ForeignKey('files.id'), nullable=True)
-    image = db.relationship('File', backref=db.backref('records', lazy=True), lazy='joined')
+    image = db.relationship('File', foreign_keys=[image_id], backref=db.backref('image_records', lazy=True), lazy='joined')
