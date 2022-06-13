@@ -26,9 +26,19 @@ jobs:
     - name: Print info
       run: |
         echo "Running pipeline for PR-${{ github.event.number }}"
+    - name: Install ffmpeg
+      run: |
+        sudo apt-get update && \
+        sudo apt-get install ffmpeg libsm6 libxext6 -y
     - name: Pull dependencies
       run: |
         pip install -r publisher/requirements.txt
         pip install -r webapp/backend/requirements.txt
-    - name: Run tests
-      run: pytest
+        pip install -r mediamanager/requirements.txt
+    - name: Run Backend tests
+      run: pytest webapp
+    - name: Run Mediamanager tests
+      run: pytest mediamanager
+    # Uncomment when at least one test is introduced
+    # - name: Run Publisher tests
+    #   run: pytest publisher
