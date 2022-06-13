@@ -82,11 +82,13 @@ def create_app():
     from app.endpoints.hooks import hooks as hooks_blueprint
     from app.endpoints.channels import channels as channels_blueprint
     from app.endpoints.output_services import services as output_services_blueprint
+    from app.endpoints.records import records as records_blueprint
 
     app.register_blueprint(main_blueprint)
     app.register_blueprint(hooks_blueprint, url_prefix='/hooks')
     app.register_blueprint(channels_blueprint, url_prefix='/channels')
     app.register_blueprint(output_services_blueprint, url_prefix='/outputs')
+    app.register_blueprint(records_blueprint, url_prefix='/records')
 
     scheduler = BackgroundScheduler()
     scheduler.add_job(func=resubscribe, trigger="interval", seconds=600)
