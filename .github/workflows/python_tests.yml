@@ -30,5 +30,10 @@ jobs:
       run: |
         pip install -r publisher/requirements.txt
         pip install -r webapp/backend/requirements.txt
-    - name: Run tests
-      run: pytest
+        pip install -r mediamanager/requirements.txt
+    - name: Run Backend tests
+      run: pytest webapp
+    - name: Run Mediamanager tests
+      run: pytest mediamanager
+    - name: Run Publisher tests
+      run: pytest mediamanager
