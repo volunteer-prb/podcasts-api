@@ -11,13 +11,12 @@ import { ChannelsService } from '../services/channels.service';
 })
 export class ChannelsComponent implements OnInit {
   pending: boolean = false;
+
   items: SourceChannel[] = [];
+
   pagination: Pagination = new Pagination();
 
-  constructor(
-    private channelsService: ChannelsService,
-    private logger: LoggerService,
-  ) {}
+  constructor(private channelsService: ChannelsService, private logger: LoggerService) {}
 
   ngOnInit(): void {
     this.load();
@@ -33,14 +32,12 @@ export class ChannelsComponent implements OnInit {
       },
       (error) => {
         this.pending = false;
-        this.logger.errorMessage(
-          'Error while loading channels',
-          error?.error?.message
-        );
-      }
+        this.logger.errorMessage('Error while loading channels', error?.error?.message);
+      },
     );
   }
 
+  // eslint-disable-next-line
   gotoPage(page: number) {
     this.logger.warn('Not implemented');
   }

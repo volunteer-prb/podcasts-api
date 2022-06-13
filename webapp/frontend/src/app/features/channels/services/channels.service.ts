@@ -27,6 +27,7 @@ export class ChannelsService {
     });
   }
 
+  // eslint-disable-next-line
   get(id: number): Observable<SourceChannel | undefined> {
     return new Observable<SourceChannel | undefined>((subscriber) => {
       subscriber.next(undefined);

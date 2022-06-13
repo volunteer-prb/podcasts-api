@@ -7,9 +7,8 @@ import { Toast } from '../core/toast';
 })
 export class LoggerService {
   private eventId = 0;
-  event: EventEmitter<Toast> = new EventEmitter<Toast>();
 
-  constructor() {}
+  event: EventEmitter<Toast> = new EventEmitter<Toast>();
 
   info(...args: any[]) {
     if (!environment.production) {
@@ -31,11 +30,7 @@ export class LoggerService {
     }
   }
 
-  errorMessage(
-    header: string,
-    body: string | undefined,
-    timeout: number = 60000
-  ): void {
+  errorMessage(header: string, body: string | undefined, timeout: number = 60000): void {
     if (body === undefined) {
       body = 'Internal service error';
     }
@@ -52,9 +47,7 @@ export class LoggerService {
   getToast(...args: any[]): Toast {
     const toast = new Toast();
     toast.header = args[0];
-    toast.body = args
-      .map((v) => (typeof v == 'string' ? v : JSON.stringify(v)))
-      .join(' ');
+    toast.body = args.map((v) => (typeof v == 'string' ? v : JSON.stringify(v))).join(' ');
     toast.id = this.eventId;
     toast.error = true;
     this.eventId++;

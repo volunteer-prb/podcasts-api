@@ -7,7 +7,9 @@ import { API_BASE_URL } from './rest.tokens';
 
 export class RestOptions {
   filters: any;
+
   includes: string[] = [];
+
   order_by: any;
 }
 
@@ -18,7 +20,7 @@ export class RestService {
   constructor(
     private http: HttpClient,
     private logger: LoggerService,
-    @Inject(API_BASE_URL) private readonly baseUrl: string
+    @Inject(API_BASE_URL) private readonly baseUrl: string,
   ) {}
 
   private includes(values: string[] | undefined): {} {
@@ -37,6 +39,7 @@ export class RestService {
     if (values === undefined) return {};
     let filters: any = {};
     for (let key in values) {
+      // eslint-disable-next-line
       if (key == '_type') filters['filter_type'] = values[key];
       else filters['filter_by_' + key] = values[key];
     }
@@ -45,6 +48,7 @@ export class RestService {
 
   private order_by(values: any): {} {
     if (values === undefined) return {};
+    // eslint-disable-next-line
     let order_by: any = {};
     for (let key in values) {
       order_by['order_by_' + key] = values[key];
@@ -67,7 +71,7 @@ export class RestService {
   get(
     method: string,
     params: any = {},
-    options: RestOptions | undefined = undefined
+    options: RestOptions | undefined = undefined,
   ): Observable<any> {
     if (options === undefined) options = new RestOptions();
     return this.request(
@@ -78,9 +82,9 @@ export class RestService {
         params,
         this.includes(options.includes),
         this.filters(options.filters),
-        this.order_by(options.order_by)
+        this.order_by(options.order_by),
       ),
-      null
+      null,
     );
   }
 
@@ -106,18 +110,12 @@ export class RestService {
     httpMethod: 'POST' | 'GET' | 'PUT' | 'DELETE' | 'UPLOAD',
     method: string,
     params: any,
-    contentType: string | null = 'application/json; charset=UTF-8'
+    contentType: string | null = 'application/json; charset=UTF-8',
   ): Observable<any> {
     if (!method.startsWith('/')) {
       method = '/' + method;
     }
-    this.logger.info(
-      'Call rest method ',
-      httpMethod,
-      method,
-      'with params',
-      params
-    );
+    this.logger.info('Call rest method ', httpMethod, method, 'with params', params);
     const url = this.baseUrl + method;
     const options: {
       headers: HttpHeaders;
@@ -136,8 +134,10 @@ export class RestService {
       withCredentials: true,
     };
     if (httpMethod === 'GET') {
+      // eslint-disable-next-line
       options['params'] = params;
     } else {
+      // eslint-disable-next-line
       options['body'] = params;
     }
 
@@ -159,7 +159,7 @@ export class RestService {
             httpMethod,
             method,
             'with params',
-            params
+            params,
           );
           throw value;
         }
@@ -171,9 +171,10 @@ export class RestService {
             httpMethod,
             method,
             'with params',
-            params
+            params,
           );
-          throw { status: 'error', message: 'Result does not contains data' };
+          throw new Error('Result does not contains data');
+          //throw { status: 'error', message: 'Result does not contains data' };
         }
         this.logger.info(
           'Rest response',
@@ -182,10 +183,10 @@ export class RestService {
           httpMethod,
           method,
           'with params',
-          params
+          params,
         );
         return value.data;
-      })
+      }),
     );
   }
 }
