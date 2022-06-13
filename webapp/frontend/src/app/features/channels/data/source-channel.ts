@@ -1,2 +1,1 @@
-export class SourceChannel {
-}
+export class SourceChannel {}

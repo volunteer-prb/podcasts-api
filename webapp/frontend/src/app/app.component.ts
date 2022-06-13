@@ -5,15 +5,11 @@ import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs';
 
 class NavItem {
-  constructor(
-    public title: string = '',
-    public url: string[] = [],
-    public icon: string = ''
-  ) {}
+  constructor(public title: string = '', public url: string[] = [], public icon: string = '') {}
 }
 
 @Component({
-  selector: 'app-root',
+  selector: 'root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
@@ -21,29 +17,34 @@ export class AppComponent implements OnInit {
   appTitle = 'Podcasts service';
 
   private _showNav: boolean = false;
+
   private _showNavDelayed: boolean = false;
-  private _showNavDelayedTimer: number | undefined = undefined;
+
+  private _showNavDelayedTimer: any = null;
+
   set showNav(value: boolean) {
     this._showNav = value;
     if (value) {
       this._showNavDelayed = true;
     } else {
       clearTimeout(this._showNavDelayedTimer);
+
       this._showNavDelayedTimer = setTimeout(() => {
         this._showNavDelayed = false;
       }, 500);
     }
   }
+
   get showNav(): boolean {
     return this._showNav;
   }
+
   get showNavDelayed(): boolean {
     return this._showNavDelayed;
   }
 
-  navItems = [
-    new NavItem('Source channels', ['channels'], 'bi-broadcast'),
-  ];
+  navItems = [new NavItem('Source channels', ['channels'], 'bi-broadcast')];
+
   currentNav: string[] | undefined = [];
 
   toasts: Toast[] = [];
@@ -64,14 +65,10 @@ export class AppComponent implements OnInit {
       }
     });
 
-    this.router.events
-      .pipe(filter((event) => event instanceof NavigationEnd))
-      .subscribe((event) => {
-        this.currentNav = this.route.snapshot.firstChild?.url.map(
-          (value) => value.path
-        );
-        this.showNav = false;
-      });
+    this.router.events.pipe(filter((event) => event instanceof NavigationEnd)).subscribe(() => {
+      this.currentNav = this.route.snapshot.firstChild?.url.map((value) => value.path);
+      this.showNav = false;
+    });
   }
 
   deleteToast(toastId: number): void {
@@ -82,10 +79,7 @@ export class AppComponent implements OnInit {
     if (this.currentNav === undefined) return false;
     if (this.currentNav.length !== url.length) return false;
     return url
-      .map(
-        (value, index) =>
-          this.currentNav !== undefined && value === this.currentNav[index]
-      )
+      .map((value, index) => this.currentNav !== undefined && value === this.currentNav[index])
       .reduce((a, b) => a && b);
   }
 }

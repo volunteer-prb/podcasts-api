@@ -5,15 +5,11 @@ import { NotFoundComponent } from '@shared/components/not-found/not-found.compon
 const routes: Routes = [
   {
     path: '',
-    loadChildren: () =>
-      import('./features/welcome/welcome.module').then((m) => m.WelcomeModule),
+    loadChildren: () => import('./features/welcome/welcome.module').then((m) => m.WelcomeModule),
   },
   {
     path: 'channels',
-    loadChildren: () =>
-      import('./features/channels/channels.module').then(
-        (m) => m.ChannelsModule
-      ),
+    loadChildren: () => import('./features/channels/channels.module').then((m) => m.ChannelsModule),
   },
   { path: '**', component: NotFoundComponent },
 ];

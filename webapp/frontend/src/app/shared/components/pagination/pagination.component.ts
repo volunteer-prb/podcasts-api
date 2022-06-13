@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Pagination } from '@shared/core/pagination';
 
 @Component({
@@ -6,15 +6,12 @@ import { Pagination } from '@shared/core/pagination';
   templateUrl: './pagination.component.html',
   styleUrls: ['./pagination.component.scss'],
 })
-export class PaginationComponent implements OnInit {
+export class PaginationComponent {
   @Input() pagination: Pagination = new Pagination();
+
   @Output() getPage: EventEmitter<{ page: number }> = new EventEmitter<{
     page: number;
   }>();
-
-  constructor() {}
-
-  ngOnInit(): void {}
 
   public previousPage(): void {
     let page = this.pagination.page;
