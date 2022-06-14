@@ -37,31 +37,43 @@ def push_notification(channel_id: str):
     Docs: https://developers.google.com/youtube/v3/guides/push_notifications
     Hub: https://pubsubhubbub.appspot.com/subscribe
     Example:
-    <feed xmlns:yt="http://www.youtube.com/xml/schemas/2015" xmlns="http://www.w3.org/2005/Atom">
-      <link rel="hub" href="https://pubsubhubbub.appspot.com"/>
-      <link rel="self" href="https://www.youtube.com/xml/feeds/videos.xml?channel_id=CHANNEL_ID"/>
-      <title>YouTube video feed</title>
-      <updated>2015-04-01T19:05:24.552394234+00:00</updated>
-      <entry>
-        <id>yt:video:VIDEO_ID</id>
-        <yt:videoId>VIDEO_ID</yt:videoId>
-        <yt:channelId>CHANNEL_ID</yt:channelId>
-        <title>Video title</title>
-        <link rel="alternate" href="http://www.youtube.com/watch?v=VIDEO_ID"/>
-        <author>
-         <name>Channel title</name>
-         <uri>http://www.youtube.com/channel/CHANNEL_ID</uri>
-        </author>
-        <published>2015-03-06T21:40:57+00:00</published>
-        <updated>2015-03-09T19:05:24.552394234+00:00</updated>
-      </entry>
-    </feed>
+        <feed xmlns:yt="http://www.youtube.com/xml/schemas/2015" xmlns="http://www.w3.org/2005/Atom">
+          <link rel="hub" href="https://pubsubhubbub.appspot.com"/>
+          <link rel="self" href="https://www.youtube.com/xml/feeds/videos.xml?channel_id=CHANNEL_ID"/>
+          <title>YouTube video feed</title>
+          <updated>2015-04-01T19:05:24.552394234+00:00</updated>
+          <entry>
+            <id>yt:video:VIDEO_ID</id>
+            <yt:videoId>VIDEO_ID</yt:videoId>
+            <yt:channelId>CHANNEL_ID</yt:channelId>
+            <title>Video title</title>
+            <link rel="alternate" href="http://www.youtube.com/watch?v=VIDEO_ID"/>
+            <author>
+             <name>Channel title</name>
+             <uri>http://www.youtube.com/channel/CHANNEL_ID</uri>
+            </author>
+            <published>2015-03-06T21:40:57+00:00</published>
+            <updated>2015-03-09T19:05:24.552394234+00:00</updated>
+          </entry>
+        </feed>
     :return: 
     """
     data = parse(request.data)
+
     if 'feed' not in data or 'entry' not in data['feed']:
         return jsonify({'error': 'Invalid XML'}), 400
+
     yt_video = data['feed']['entry']
     entry = YoutubeVideo.from_xml(yt_video)
-    media_manager.send_task('media_manager.download', (entry.to_json(),))
-    return jsonify(entry), 200
+
+    db.session.add(entry)
+    db.session.commit()
+
+    download_task = dict(
+        _type_='DownloadTask',
+        url=entry.uri,
+        channel_id=entry.channel.channel_id,
+    )
+    media_manager.send_task('media_manager.download', (download_task,))
+
+    return entry.serialize(), 200
