@@ -12,7 +12,7 @@ from app.objects.Recipient import TelegramRecipient
 from app.telegram.telegram_bot_api import TelegramBot, TelegramBotHelper
 
 
-@celery.task()
+@celery.task(name='publisher.telegram.publish')
 def publish(envelope: EnvelopeBody, recipient: TelegramRecipient):
     """Publish envelope to telegram channel"""
 

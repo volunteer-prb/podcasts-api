@@ -10,3 +10,6 @@ register(
     content_type='application/json',
 )
 celery = Celery('media_manager', broker='redis://')
+celery.conf.task_routes = {
+    '*': {'queue': 'media_manager_tasks'},
+}

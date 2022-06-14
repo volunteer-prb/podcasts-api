@@ -15,7 +15,7 @@ docker build -t volunteer-prb/podcasts-api-mediamanager .
 ```commandline
 export DOWNLOAD_PATH=<parent_path_to_save_files>
 export DATABASE_URI=<database connection string, e.g. postgresql://postgres:qwerty@localhost/youtube_podcasts>
-celery --app=app.downloader --broker=redis://localhost worker --loglevel=INFO
+celery --app=app.downloader --broker=redis://localhost worker --loglevel=INFO -Q media_manager_tasks
 ```
 
 #### In docker 

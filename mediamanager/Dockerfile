@@ -10,4 +10,4 @@ COPY requirements.txt /app/
 RUN pip install -r requirements.txt
 COPY app/ /app/app
 ENV PYTHONUNBUFFERED=1
-CMD ["celery", "--app=app.downloader", "worker", "--loglevel=INFO"]
+CMD ["celery", "--app=app.downloader", "worker", "--loglevel=INFO", "-Q media_manager_tasks"]
