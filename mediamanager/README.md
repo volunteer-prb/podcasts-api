@@ -21,9 +21,9 @@ celery --app=app.downloader --broker=redis://localhost worker --loglevel=INFO -Q
 #### In docker 
 ```commandline
 docker run -e DOWNLOAD_PATH=<parent_path_to_save_files> \
-  -e DATABASE_URI=<database connection string, e.g. postgresql://postgres:qwerty@localhost/youtube_podcasts>
+  -e DATABASE_URI=<database connection string, e.g. postgresql://postgres:qwerty@localhost/youtube_podcasts> \
   -e BROKER_URL=<redis_host> \
-  --name publisher --rm \
+  --name media_manager --rm \
   volunteer-prb/podcasts-api-mediamanager
 ```
 

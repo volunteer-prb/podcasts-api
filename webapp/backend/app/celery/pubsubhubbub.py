@@ -22,7 +22,7 @@ def resubscribe(ctx, time_delta=None):
             subscribe.delay(channel.channel_id, channel.pubsubhubbub_mode)
 
 
-@celery.task()
+@celery.task(name='backend.pubsubhubbub.subscribe')
 def subscribe(channel_id: str, mode_subscribe: str = 'subscribe', lease_seconds: int = 1e6):
     """
     Create subscribe request to pubsubhubbub.appspot.com hub

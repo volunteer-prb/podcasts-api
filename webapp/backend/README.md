@@ -2,7 +2,17 @@
 
 ## Build
 
-*todo*
+### Backend (Flask)
+
+```commandline
+docker build -t volunteer-prb/podcasts-api-backend .
+```
+
+### Backend (Celery worker)
+
+```commandline
+docker build -f DockerfileCelery -t volunteer-prb/podcasts-api-celery-backend .
+```
 
 ## Running
 
@@ -18,7 +28,7 @@ flask run
 #### Celery workers
 ```commandline
 export BASE_URL=https://0000-000-00-00-00.eu.ngrok.io
-celery -A app worker
+celery -A app worker -Q celery_backend_tasks
 ```
 
 ## Environment
