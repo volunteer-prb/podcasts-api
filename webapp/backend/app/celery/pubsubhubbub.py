@@ -1,12 +1,25 @@
+from datetime import timedelta, datetime
 from os import environ
 
 import requests
+from sqlalchemy import and_
 
 from app.celery import celery
 
 
-def resubscribe():
-    print('resubscribe')
+def resubscribe(ctx, time_delta=None):
+    with ctx:
+        from app.models.source_channels import SourceChannel
+        if not time_delta:
+            time_delta = timedelta(days=1)
+
+        resubscribe_channels = SourceChannel.query.filter(and_(
+            SourceChannel.pubsubhubbub_mode == 'subscribe',
+            SourceChannel.pubsubhubbub_expires_at <= datetime.now() + time_delta
+        ))
+
+        for channel in resubscribe_channels:
+            subscribe.delay(channel.channel_id, channel.pubsubhubbub_mode)
 
 
 @celery.task()

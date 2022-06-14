@@ -1,6 +1,7 @@
 import atexit
 import json
 import traceback
+from datetime import timedelta
 from typing import Tuple, Dict
 
 from flask import Flask, request, g, Response
@@ -91,7 +92,7 @@ def create_app():
     app.register_blueprint(records_blueprint, url_prefix='/records')
 
     scheduler = BackgroundScheduler()
-    scheduler.add_job(func=resubscribe, trigger="interval", seconds=600)
+    scheduler.add_job(func=resubscribe, args=(app.app_context(), timedelta(hours=12),), trigger="interval", hours=6)
     scheduler.start()
     atexit.register(lambda: scheduler.shutdown())
     return app
