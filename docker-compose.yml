@@ -1,0 +1,126 @@
+version: '3.8'
+services:
+#  Uncomment when Frontend service will be introduced
+#  frontend:
+#    image: localhost:5000/frontend:latest
+#    ports:
+#      - 8080:80
+#    networks:
+#      - public_access
+#    restart: always
+
+  backend:
+    image: volunteer-prb/podcasts-api-backend:latest
+    environment:
+      DATABASE_URI: postgresql://postgres:testPassDontUseInProd@postgres/youtube_podcasts
+      CELERY_BROKER_URL: redis://:testPassDontUseInProd@redis:6379
+      MEDIA_MANAGER_BROKER_URL: redis://:testPassDontUseInProd@redis:6379
+      PUBLISHER_BROKER_URL: redis://:testPassDontUseInProd@redis:6379
+    ports:
+      - 127.0.0.1:1235:5000
+    volumes:
+      - ./migrations:/app/migrations
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - public_access
+      - database_only
+      - redis_only
+    restart: always
+
+  postgres:
+    image: docker.io/postgres:14-alpine
+    environment:
+      - POSTGRES_PASSWORD=testPassDontUseInProd
+      - POSTGRES_DB=youtube_podcasts
+    volumes:
+      - ./postgres/data/:/var/lib/postgresql/data # persist postgres data to ./postgres/data/ on the host
+    networks:
+      - database_only
+    restart: always
+
+  ################
+  # Celery Stack #
+  ################
+
+  telegram-bot-api:
+    image: docker.io/aiogram/telegram-bot-api:latest
+    environment:
+      TELEGRAM_API_ID: <put_telegram_api_id>
+      TELEGRAM_API_HASH: <put_telegram_api_hash>
+    volumes:
+      - ./telegram-bot-api-data:/var/lib/telegram-bot-api
+    networks:
+      - telegram_bot_api_only
+      - public_access
+    restart: always
+
+  # Worker
+  publisher:
+    image: volunteer-prb/podcasts-api-publisher:latest
+    environment:
+      TELEGRAM_SERVER: http://telegram-bot-api:8081
+      TELEGRAM_TOKEN: <put_bot_token_here>
+      BROKER_URL: redis://:testPassDontUseInProd@redis:6379
+    volumes:
+      - ./downloads:/downloads
+    depends_on:
+      - telegram-bot-api
+      - redis
+    networks:
+      - telegram_bot_api_only
+      - redis_only
+      - public_access
+    restart: always
+
+  # Worker
+  media_manager:
+    image: volunteer-prb/podcasts-api-mediamanager
+    environment:
+      BROKER_URL: redis://:testPassDontUseInProd@redis:6379
+      DATABASE_URI: postgresql://postgres:testPassDontUseInProd@postgres/youtube_podcasts
+      DOWNLOAD_PATH: /downloads
+    volumes:
+      - ./downloads:/downloads
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - redis_only
+      - database_only
+    restart: always
+
+  backend_worker:
+    image: volunteer-prb/podcasts-api-celery-backend
+    environment:
+      BASE_URL: https://0000-000-00-00-00.eu.ngrok.io
+      BROKER_URL: redis://:testPassDontUseInProd@redis:6379
+    depends_on:
+      - redis
+    networks:
+      - redis_only
+    restart: always
+
+  # Broker
+  redis:
+    image: docker.io/redis:7.0.0-alpine
+    ports:
+      - 6379:6379
+    command: redis-server --save 20 1 --loglevel warning --requirepass testPassDontUseInProd
+    volumes:
+      - ./cache:/data
+    networks:
+      - redis_only
+    restart: always
+
+  ################
+
+networks:
+  public_access: # Network for publically exposed services
+  telegram_bot_api_only:
+    internal: true
+  redis_only:
+    internal: true
+  database_only:
+    internal: true

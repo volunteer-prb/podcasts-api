@@ -13,13 +13,16 @@
     <updated>2015-03-09T19:05:24.552394234+00:00</updated>
 </entry>
 """
+import flask_sqlalchemy_extension as ext
+from dateutil import parser
+
 from app import db
 from app.models.mixins import TimestampMixin
 from app.models.files import File
 from app.models.source_channels import SourceChannel
 
 
-class YoutubeVideo(TimestampMixin, db.Model):
+class YoutubeVideo(TimestampMixin, ext.SerializeMixin, ext.QueryMixin, db.Model):
     __tablename__ = 'youtube_videos'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -39,23 +42,12 @@ class YoutubeVideo(TimestampMixin, db.Model):
             channel=channel,
             title=xml['title'],
             uri=xml['link']['@href'],
-            yt_published=xml['published'],
-            yt_updated=xml['updated'],
+            yt_published=parser.parse(xml['published']),
+            yt_updated=parser.parse(xml['updated']),
         )
 
-    def to_json(self):
-        return {
-            'id': self.id,
-            'yt_id': self.yt_id,
-            'channel_id': self.channel_id,
-            'title': self.title,
-            'uri': self.uri,
-            'yt_published': self.yt_published,
-            'yt_updated': self.yt_updated,
-        }
 
-
-class RecordTag(db.Model):
+class RecordTag(ext.SerializeMixin, ext.QueryMixin, db.Model):
     __tablename__ = 'record_tags'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -64,7 +56,7 @@ class RecordTag(db.Model):
     record = db.relationship('Record', backref=db.backref('tags', lazy=False), lazy='joined')
 
 
-class Record(TimestampMixin, db.Model):
+class Record(TimestampMixin, ext.SerializeMixin, ext.QueryMixin, db.Model):
     __tablename__ = 'records'
 
     id = db.Column(db.Integer, primary_key=True)

@@ -4,7 +4,7 @@ from app.objects.Recipient import TelegramRecipient
 from app.telegram import publisher as tg_publisher
 
 
-@celery.task()
+@celery.task(name='publisher.publish')
 def publish(envelope: Envelope):
     """Publish envelope (topic) to social media by recipients list"""
     # filter recipient list, select only telegram recipients

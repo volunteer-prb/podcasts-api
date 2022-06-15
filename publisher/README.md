@@ -13,7 +13,7 @@ docker build -t volunteer-prb/podcasts-api-publisher .
 #### Local
 ```commandline
 export TELEGRAM_TOKEN=<put_bot_token_here>
-celery --app=app.publisher --broker=redis://localhost worker --loglevel=INFO
+celery --app=app.publisher --broker=redis://localhost worker --loglevel=INFO -Q publisher_tasks
 ```
 
 #### In docker 

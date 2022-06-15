@@ -10,3 +10,6 @@ register(
     content_type='application/json',
 )
 celery = Celery('publisher', broker='redis://')
+celery.conf.task_routes = {
+    '*': {'queue': 'publisher_tasks'},
+}

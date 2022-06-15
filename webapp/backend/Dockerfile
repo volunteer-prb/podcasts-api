@@ -9,4 +9,4 @@ RUN pip install -r requirements.txt
 COPY app/ /app/app/
 ENV PYTHONUNBUFFERED=1
 ENV FLASK_APP=app
-CMD ["flask", "run"]
+CMD ["flask", "run", "--host=0.0.0.0"]

@@ -1,13 +1,14 @@
 import atexit
 import json
 import traceback
+from datetime import timedelta
 from typing import Tuple, Dict
 
 from flask import Flask, request, g, Response
 from flask_migrate import Migrate
 from os import environ
 from apscheduler.schedulers.background import BackgroundScheduler
-from flask_sqlalchemy_extension.model import SqlalchemyExtensionError
+from flask_sqlalchemy_extension import SqlalchemyExtensionError
 from werkzeug.exceptions import HTTPException
 
 from app.encoder import ObjectEncoder
@@ -81,13 +82,17 @@ def create_app():
     from app.endpoints.main import main as main_blueprint
     from app.endpoints.hooks import hooks as hooks_blueprint
     from app.endpoints.channels import channels as channels_blueprint
+    from app.endpoints.output_services import services as output_services_blueprint
+    from app.endpoints.records import records as records_blueprint
 
     app.register_blueprint(main_blueprint)
     app.register_blueprint(hooks_blueprint, url_prefix='/hooks')
     app.register_blueprint(channels_blueprint, url_prefix='/channels')
+    app.register_blueprint(output_services_blueprint, url_prefix='/outputs')
+    app.register_blueprint(records_blueprint, url_prefix='/records')
 
     scheduler = BackgroundScheduler()
-    scheduler.add_job(func=resubscribe, trigger="interval", seconds=600)
+    scheduler.add_job(func=resubscribe, args=(app.app_context(), timedelta(hours=12),), trigger="interval", hours=6)
     scheduler.start()
     atexit.register(lambda: scheduler.shutdown())
     return app
