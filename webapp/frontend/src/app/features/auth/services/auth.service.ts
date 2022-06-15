@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { User } from '@core/api/models/user.model';
 import { AuthResponse } from '@core/api/models/auth-response.model';
+import { SessionStorageService } from '@core/services/session-storage.service';
 
 @Injectable({
   providedIn: 'root',
@@ -14,7 +15,10 @@ export class AuthService {
     return this.isAuthorized$.value;
   }
 
-  constructor(private readonly authApi: AuthApi) {}
+  constructor(
+    private readonly authApi: AuthApi,
+    private sessionStorageService: SessionStorageService,
+  ) {}
 
   private setSuccessAuth = () => {
     this.isAuthorized$.next(true);
