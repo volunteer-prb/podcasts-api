@@ -1,27 +1,33 @@
-<div class="sign-up">
+<form [formGroup]="form" class="sign-up">
   <h2 class="sign-up__title title-4">Зарегистрируйтесь</h2>
   <p class="sign-up__subtitle paragraph-4">{{ subtitle$ | async }}</p>
 
   <ng-container *ngIf="(currentSignUpState$ | async) === signUpStates.EMAIL">
     <div class="sign-up__input">
-      <input-field placeholder="Email" type="email"></input-field>
+      <input-field formControlName="email" placeholder="Email" type="email"></input-field>
     </div>
   </ng-container>
 
   <ng-container *ngIf="(currentSignUpState$ | async) === signUpStates.PASSWORD">
     <div class="sign-up__input">
-      <input-field placeholder="Пароль" type="password"></input-field>
+      <input-field formControlName="password" placeholder="Пароль" type="password"></input-field>
     </div>
     <div class="sign-up__input">
-      <input-field placeholder="Подтвердите пароль" type="password"></input-field>
+      <input-field
+        formControlName="confirmPassword"
+        placeholder="Подтвердите пароль"
+        type="password"
+      ></input-field>
     </div>
   </ng-container>
 
   <div class="sign-up__button">
-    <app-button width="100%">Зарегистрироваться</app-button>
+    <app-button (click)="onClickRegisterButton()" [disabled]="isDisabledButton" width="100%">
+      Зарегистрироваться
+    </app-button>
   </div>
   <p class="sign-up__login">
     <span class="paragraph-6">Есть аккаунт?</span>
     <span class="link" (click)="navigateToSignIn()">Войти</span>
   </p>
-</div>
+</form>
