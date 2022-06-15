@@ -14,6 +14,7 @@
 </entry>
 """
 import flask_sqlalchemy_extension as ext
+from dateutil import parser
 
 from app import db
 from app.models.mixins import TimestampMixin
@@ -41,8 +42,8 @@ class YoutubeVideo(TimestampMixin, ext.SerializeMixin, ext.QueryMixin, db.Model)
             channel=channel,
             title=xml['title'],
             uri=xml['link']['@href'],
-            yt_published=xml['published'],
-            yt_updated=xml['updated'],
+            yt_published=parser.parse(xml['published']),
+            yt_updated=parser.parse(xml['updated']),
         )
 
 
