@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
+import { AuthGuard } from '@features/auth/guards/auth.guard';
 import { NotFoundComponent } from '@shared/components/not-found/not-found.component';
 import { AppRoutes } from './core/values/app-routes.enum';
 
@@ -7,7 +8,7 @@ const routes: Routes = [
   {
     path: '',
     pathMatch: 'full',
-    redirectTo: AppRoutes.AUTH,
+    redirectTo: AppRoutes.CHANNELS,
   },
   {
     path: AppRoutes.AUTH,
@@ -15,6 +16,7 @@ const routes: Routes = [
   },
   {
     path: AppRoutes.CHANNELS,
+    canActivate: [AuthGuard],
     loadChildren: () => import('./features/channels/channels.module').then((m) => m.ChannelsModule),
   },
   { path: '**', component: NotFoundComponent },

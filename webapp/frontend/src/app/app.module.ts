@@ -8,10 +8,12 @@ import { FormsModule } from '@angular/forms';
 import { SharedModule } from '@shared/shared.module';
 import { API_BASE_URL } from '@shared/services/communication/rest.tokens';
 import { environment } from 'src/environments/environment';
+import { CoreModule } from '@core/core.module';
 
 @NgModule({
   declarations: [AppComponent],
   imports: [
+    CoreModule,
     BrowserModule,
     BrowserAnimationsModule,
     AppRoutingModule,
