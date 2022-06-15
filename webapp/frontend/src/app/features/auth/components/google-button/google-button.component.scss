@@ -1,0 +1,17 @@
+@import 'vars';
+
+.content-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+
+  & > .icon-google {
+    margin-right: 12px;
+  }
+
+  & > .paragraph-5 {
+    line-height: 18px;
+    color: $black-color;
+  }
+}

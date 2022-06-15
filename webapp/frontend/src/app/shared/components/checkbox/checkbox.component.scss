@@ -1,0 +1,31 @@
+@import 'vars';
+
+.checkbox {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+
+  &__input {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+    border: 2px solid $gray-color;
+    border-radius: 4px;
+    appearance: none;
+
+    &:checked {
+      background-color: $light-blue-color;
+      border-color: $light-blue-color;
+    }
+
+    &:checked::before {
+      content: url('/assets/icons/check.svg');
+      width: 15px;
+      height: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+}

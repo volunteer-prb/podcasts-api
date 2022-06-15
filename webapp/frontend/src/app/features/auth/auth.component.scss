@@ -1,0 +1,30 @@
+@import 'vars';
+
+.auth {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: row;
+
+  &__router-outlet {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__logo-section {
+    background-color: $light-gray-color;
+    position: relative;
+
+    & > * {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+  }
+}
+
+.section {
+  width: 50%;
+}

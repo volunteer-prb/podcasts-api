@@ -1,0 +1,54 @@
+@import 'vars';
+
+.input-container {
+  position: relative;
+
+  & > i {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 22px;
+
+    &:hover {
+      cursor: pointer;
+    }
+  }
+
+  &:hover {
+    & > .input {
+      border-color: $gray-color;
+      background: $white-color;
+    }
+  }
+}
+
+.input {
+  width: 100%;
+  height: 52px;
+  background: $light-gray-color;
+  border-radius: 8px;
+  border: 1px solid $light-gray-color;
+  padding: 0 50px 0 20px;
+  outline: none;
+  color: $black-color;
+
+  &:focus {
+    border-color: $primary-gray-color !important;
+    background: $white-color;
+  }
+
+  &::placeholder {
+    color: $gray-color;
+  }
+
+  &--invalid {
+    background: $white-color;
+    border-color: $red-color !important;
+  }
+
+  &--disabled {
+    background: $light-color;
+    color: $gray-color;
+    border: none;
+  }
+}

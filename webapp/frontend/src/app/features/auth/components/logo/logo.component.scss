@@ -1,0 +1,52 @@
+@import 'vars';
+
+.logo {
+  position: relative;
+  width: 197px;
+  height: 197px;
+
+  & > .circle,
+  .icon-micro {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+}
+
+.circle {
+  border-radius: 50%;
+
+  &-1 {
+    width: 197px;
+    height: 197px;
+    background-color: $red-color;
+  }
+
+  &-2 {
+    width: 169px;
+    height: 169px;
+    background: linear-gradient(158.23deg, #ed3001 12%, rgba(255, 51, 0, 0) 89.95%);
+  }
+
+  &-3 {
+    width: 143px;
+    height: 143px;
+    background: linear-gradient(158.23deg, #da2c00 12%, rgba(255, 51, 0, 0) 89.95%);
+  }
+}
+
+.blur {
+  position: absolute;
+  top: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 150%;
+  height: 120px;
+  background: radial-gradient(
+    100% 1441.55% at 10.47% 0%,
+    rgba(243, 244, 248, 0.85) 0%,
+    rgba(243, 244, 248, 0.65) 100%
+  );
+  backdrop-filter: blur(16px);
+}

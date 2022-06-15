@@ -1,0 +1,16 @@
+<div class="input-container">
+  <input
+    class="input"
+    [placeholder]="placeholder"
+    [value]="value"
+    [type]="type"
+    [type]="isShowPassword ? 'text' : type"
+    (input)="onInputValueChange($event)"
+  />
+  <ng-template [ngIf]="type === 'password'">
+    <i
+      (click)="togglePasswordVisibility()"
+      class="{{ 'icon-eye-' + (isShowPassword ? 'open' : 'close') }}"
+    ></i>
+  </ng-template>
+</div>
