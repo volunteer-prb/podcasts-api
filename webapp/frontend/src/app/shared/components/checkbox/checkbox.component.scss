@@ -13,6 +13,7 @@
     border: 2px solid $gray-color;
     border-radius: 4px;
     appearance: none;
+    cursor: pointer;
 
     &:checked {
       background-color: $light-blue-color;
