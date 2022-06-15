@@ -1,0 +1,37 @@
+@import 'vars';
+
+.sign-up {
+  min-width: 300px;
+  display: flex;
+  align-items: stretch;
+  justify-content: flex-start;
+  flex-direction: column;
+
+  &__title {
+    margin-bottom: 10px;
+  }
+
+  &__subtitle {
+    margin-bottom: 38px;
+  }
+
+  &__input {
+    margin-bottom: 16px;
+  }
+
+  &__button {
+    margin-top: 34px;
+  }
+
+  &__login {
+    margin-top: 30px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+    & > .link {
+      margin-left: 10px;
+    }
+  }
+}
