@@ -5,7 +5,7 @@ import pytest
 from flask_migrate import init, migrate, upgrade
 
 from app import create_app, db
-from app.celery import celery as _celery
+from app.celery import celery as _celery, publisher as _publisher
 from app.models.files import AudioFile, File, FileUriType
 from app.models.output_services import TelegramOutputService
 from app.models.source_channels import SourceChannel, SourceChannelOutputService
@@ -16,6 +16,12 @@ from app.models.video import YoutubeVideo, Record
 def celery(request):
     _celery.conf.update(broker_url='memory://localhost/', task_always_eager=True)
     return _celery
+
+
+@pytest.fixture(scope='module')
+def publisher(request):
+    _publisher.conf.update(broker_url='memory://localhost/', task_always_eager=True)
+    return _publisher
 
 
 @pytest.fixture()
@@ -87,7 +93,7 @@ def app(tmpdir):
 
 
 @pytest.fixture()
-def client(app, celery):
+def client(app, celery, publisher):
     return app.test_client()
 
 
