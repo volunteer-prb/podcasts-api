@@ -74,11 +74,8 @@ export class SignUpComponent implements OnInit, OnDestroy {
     this.subscriptions.add(
       this.form.valueChanges.subscribe((user: FormModel) => {
         this.user = user;
-        console.log(this.user);
       }),
     );
-
-    this.subscriptions.add();
   }
 
   ngOnDestroy() {
@@ -104,6 +101,7 @@ export class SignUpComponent implements OnInit, OnDestroy {
   };
 
   private handleError = (e: HttpErrorResponse) => {
+    // TODO: Add toast with error message
     console.warn(e.status, 'Error auth');
   };
 
