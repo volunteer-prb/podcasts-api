@@ -1,9 +1,9 @@
 export interface StorageInterface {
   length(): number;
   clear(): void;
-  getItem(key: string): unknown;
+  getItem<T>(key: string): T | null;
   removeItem(key: string): void;
-  setItem(key: string, value: unknown): void;
+  setItem<T>(key: string, value: T): void;
 }
 
 export abstract class BaseStorage implements StorageInterface {
@@ -17,15 +17,19 @@ export abstract class BaseStorage implements StorageInterface {
     this.storage.clear();
   }
 
-  getItem(key: string): unknown {
-    return JSON.parse(this.storage.getItem(key) ?? '{}');
+  getItem<T>(key: string): T | null {
+    try {
+      return JSON.parse(this.storage.getItem(key) as string);
+    } catch {
+      return null;
+    }
   }
 
   removeItem(key: string) {
     this.storage.removeItem(key);
   }
 
-  setItem(key: string, value: unknown) {
+  setItem<T>(key: string, value: T) {
     this.storage.setItem(key, JSON.stringify(value));
   }
 }

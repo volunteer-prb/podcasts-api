@@ -12,7 +12,7 @@ export class AuthGuard implements CanActivate {
   canActivate(): boolean {
     if (this.authService.isAuthorized) return true;
 
-    this.router.navigate([AppRoutes.AUTH]);
+    this.router.navigate([AppRoutes.AUTH], { replaceUrl: true });
 
     return false;
   }

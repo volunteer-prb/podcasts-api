@@ -23,6 +23,8 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 export class InputFieldComponent implements ControlValueAccessor {
   @Input() placeholder: string = 'placeholder';
 
+  @Input() isInvalid = false;
+
   @Input() type: 'email' | 'password' | 'text' = 'email';
 
   value: string | undefined = '';

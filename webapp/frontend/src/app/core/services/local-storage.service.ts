@@ -6,6 +6,6 @@ import { BaseStorage } from './base-storage';
 })
 export class LocalStorageService extends BaseStorage {
   constructor() {
-    super(sessionStorage);
+    super(localStorage);
   }
 }

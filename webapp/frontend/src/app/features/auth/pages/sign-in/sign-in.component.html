@@ -2,10 +2,20 @@
   <h2 class="sign-in__title title-4">Войдите в аккаунт</h2>
   <p class="sign-in__subtitle paragraph-4">Введите свой Email и пароль</p>
   <div class="sign-in__input">
-    <input-field formControlName="email" placeholder="Email" type="email"></input-field>
+    <input-field
+      [isInvalid]="isInvalidEmail"
+      formControlName="email"
+      placeholder="Email"
+      type="email"
+    ></input-field>
   </div>
   <div class="sign-in__input">
-    <input-field formControlName="password" placeholder="Пароль" type="password"></input-field>
+    <input-field
+      [isInvalid]="isInvalidPassword"
+      formControlName="password"
+      placeholder="Пароль"
+      type="password"
+    ></input-field>
   </div>
   <div class="sign-in__helpers">
     <checkbox></checkbox>

@@ -1,3 +1,4 @@
+import { StorageKeys } from '@core/values/storage-keys.enum';
 import { AuthApi } from '@core/api/services/auth.api';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
@@ -18,17 +19,28 @@ export class AuthService {
   constructor(
     private readonly authApi: AuthApi,
     private sessionStorageService: SessionStorageService,
-  ) {}
+  ) {
+    const authState = sessionStorageService.getItem<boolean>(StorageKeys.AUTH_STATE);
+    this.isAuthorized$.next(!!authState);
+  }
 
-  private setSuccessAuth = () => {
+  private handleSuccessAuth = () => {
+    this.sessionStorageService.setItem(StorageKeys.AUTH_STATE, true);
+
     this.isAuthorized$.next(true);
   };
 
+  private handleLogout = () => {
+    this.sessionStorageService.setItem(StorageKeys.AUTH_STATE, false);
+
+    this.isAuthorized$.next(false);
+  };
+
   login(user: User): Observable<AuthResponse> {
-    return this.authApi.login(user).pipe(tap(this.setSuccessAuth));
+    return this.authApi.login(user).pipe(tap(this.handleSuccessAuth));
   }
 
   register(user: User): Observable<AuthResponse> {
-    return this.authApi.register(user).pipe(tap(this.setSuccessAuth));
+    return this.authApi.register(user).pipe(tap(this.handleSuccessAuth));
   }
 }
