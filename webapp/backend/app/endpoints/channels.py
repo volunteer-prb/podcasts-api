@@ -4,6 +4,7 @@ from werkzeug.exceptions import BadRequest
 
 from app import db
 from app.celery import pubsubhubbub
+from app.celery.pubsubhubbub import generate_verify_token
 from app.models.source_channels import SourceChannel
 
 channels = Blueprint('channels', __name__)
@@ -26,8 +27,15 @@ def find_channels():
     Returns:
         Serialized source channels and pagination or raise an exception
     """
-    return serialize(SourceChannel.complex_query(**g.complex_query).paginate(page=g.page, per_page=g.per_page),
-                     include=g.includes)
+    return serialize(SourceChannel.complex_query(**g.complex_query).paginate(
+        page=g.page,
+        per_page=g.per_page
+    ),
+        include=g.includes,
+        exclude=[
+            'verify_token',
+        ],
+    )
 
 
 @channels.route('/<int:id>', methods=['GET'])
@@ -41,7 +49,12 @@ def get_channel(id=None):
     Returns:
         Serialized source channel or raise an exception
     """
-    return SourceChannel.query.filter_by(id=id).first_or_404().serialize(include=g.includes)
+    return SourceChannel.query.filter_by(id=id).first_or_404().serialize(
+        include=g.includes,
+        exclude=[
+            'verify_token',
+        ],
+    )
 
 
 @channels.route('/', methods=['POST'])
@@ -86,15 +99,21 @@ def create_or_update_channel(id=None):
         raise BadRequest('Column `pubsubhubbub_mode` must be "subscribe" or "unsubscribe"')
 
     channel.pubsubhubbub_mode = channel.pubsubhubbub_mode.lower()
+    channel.verify_token = generate_verify_token()
 
     # save to db
     db.session.add(channel)
     db.session.commit()
 
     # change subscription mode
-    pubsubhubbub.subscribe.delay(channel.channel_id, mode_subscribe=channel.pubsubhubbub_mode)
+    pubsubhubbub.subscribe.delay(channel.channel_id, channel.verify_token, mode_subscribe=channel.pubsubhubbub_mode)
 
-    return channel.serialize(include=g.includes)
+    return channel.serialize(
+        include=g.includes,
+        exclude=[
+            'verify_token',
+        ],
+    )
 
 
 @channels.route('/<int:id>', methods=['DELETE'])

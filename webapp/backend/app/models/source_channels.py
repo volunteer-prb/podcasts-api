@@ -21,6 +21,8 @@ class SourceChannel(TimestampMixin, ext.SerializeMixin, ext.DeserializeMixin, ex
     pubsubhubbub_mode = db.Column(db.String, nullable=False)
     # subscribe expires date (need to refresh before expire)
     pubsubhubbub_expires_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    # pubsubhubbub verify token, used only in subscribe/unsubscribe event
+    verify_token = db.Column(db.String, nullable=False)
 
 
 class SourceChannelOutputService(ext.SerializeMixin, db.Model):

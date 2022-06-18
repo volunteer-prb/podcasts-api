@@ -1,3 +1,4 @@
+import secrets
 from datetime import timedelta, datetime
 from os import environ
 
@@ -7,9 +8,20 @@ from sqlalchemy import and_
 from app.celery import celery
 
 
+def generate_verify_token():
+    """
+    Generate random secret key for hub verification
+    Returns:
+        Secret token (string)
+    """
+    return secrets.token_urlsafe(16)
+
+
 def resubscribe(ctx, time_delta=None):
+    from app import db
+    from app.models.source_channels import SourceChannel
+
     with ctx:
-        from app.models.source_channels import SourceChannel
         if not time_delta:
             time_delta = timedelta(days=1)
 
@@ -19,11 +31,15 @@ def resubscribe(ctx, time_delta=None):
         ))
 
         for channel in resubscribe_channels:
-            subscribe.delay(channel.channel_id, channel.pubsubhubbub_mode)
+            channel.verify_token = generate_verify_token()
+            db.session.add(channel)
+            subscribe.delay(channel.channel_id, channel.verify_token, channel.pubsubhubbub_mode)
+
+        db.session.commit()
 
 
 @celery.task(name='backend.pubsubhubbub.subscribe')
-def subscribe(channel_id: str, mode_subscribe: str = 'subscribe', lease_seconds: int = 1e6):
+def subscribe(channel_id: str, verify_token: str, mode_subscribe: str = 'subscribe', lease_seconds: int = 1e6):
     """
     Create subscribe request to pubsubhubbub.appspot.com hub
     """
@@ -35,5 +51,6 @@ def subscribe(channel_id: str, mode_subscribe: str = 'subscribe', lease_seconds:
         'hub.mode': mode_subscribe,
         'hub.topic': f'https://www.youtube.com/xml/feeds/videos.xml?channel_id={channel_id}',
         'hub.verify': 'sync',
-        'hub.lease_seconds': lease_seconds
+        'hub.lease_seconds': lease_seconds,
+        'hub.verify_token': verify_token,
     })

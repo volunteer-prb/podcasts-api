@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 
 from flask import Blueprint, request, jsonify
+from werkzeug.exceptions import BadRequest
 from xmltodict import parse
 
 from app.celery import media_manager
@@ -18,11 +19,14 @@ def subscribe(channel_id: str):
     source_channel = SourceChannel.query.filter_by(channel_id=channel_id).first_or_404()
 
     # check request args for required arguments
-    for arg in ['hub.lease_seconds', 'hub.mode', 'hub.challenge']:
+    for arg in ['hub.lease_seconds', 'hub.mode', 'hub.challenge', 'hub.verify_token']:
         if arg not in request.args:
             return f'{arg} not provided', 400
 
-    if request.args['hub.mode'] == source_channel.pubsubhubbub_mode:
+    if all([
+        request.args['hub.mode'] == source_channel.pubsubhubbub_mode,
+        request.args['hub.verify_token'] == source_channel.verify_token
+    ]):
         source_channel.pubsubhubbub_expires_at = datetime.now() + timedelta(seconds=int(request.args['hub.lease_seconds']))
         db.session.add(source_channel)
         db.session.commit()
@@ -65,6 +69,9 @@ def push_notification(channel_id: str):
 
     yt_video = data['feed']['entry']
     entry = YoutubeVideo.from_xml(yt_video)
+
+    if entry.channel.channel_id != channel_id:
+        raise BadRequest('Channels does not match')
 
     db.session.add(entry)
     db.session.commit()

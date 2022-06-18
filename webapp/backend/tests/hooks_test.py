@@ -63,14 +63,18 @@ def app(tmpdir):
         upgrade(migrations_dir)
 
         # create data for tests
-        channel_subscribe = SourceChannel(title='test subscribe',
-                                          channel_id='pytest_channel_sub_id',
-                                          pubsubhubbub_mode='subscribe',
-                                          )
-        channel_unsubscribe = SourceChannel(title='test unsubscribe',
-                                            channel_id='pytest_channel_unsub_id',
-                                            pubsubhubbub_mode='unsubscribe',
-                                            )
+        channel_subscribe = SourceChannel(
+            title='test subscribe',
+            channel_id='pytest_channel_sub_id',
+            pubsubhubbub_mode='subscribe',
+            verify_token='QWEQWE',
+        )
+        channel_unsubscribe = SourceChannel(
+            title='test unsubscribe',
+            channel_id='pytest_channel_unsub_id',
+            pubsubhubbub_mode='unsubscribe',
+            verify_token='EWQEWQ',
+        )
         db.session.add(channel_subscribe)
         db.session.add(channel_unsubscribe)
         db.session.commit()
@@ -100,28 +104,36 @@ def test_hooks(client):
     assert resp.json['data']['yt_id'] == 'VIDEO_ID_PYTEST'
 
 
-@pytest.mark.parametrize("mode, channel_id", [('subscribe', 'pytest_channel_sub_id'),
-                                              ('unsubscribe', 'pytest_channel_unsub_id'),
+def test_hooks_error_channel(client):
+    resp = client.post('/hooks/new/pytest_channel_notfound_id', data=xml_example)
+    assert resp.status_code == 400
+
+
+@pytest.mark.parametrize("mode, channel_id, verify_token", [('subscribe', 'pytest_channel_sub_id', 'QWEQWE'),
+                                                            ('unsubscribe', 'pytest_channel_unsub_id', 'EWQEWQ'),
                                               ])
-def test_hook_subscribe_good(client, mode, channel_id):
+def test_hook_subscribe_good(client, mode, channel_id, verify_token):
     resp = client.get(f'/hooks/new/{channel_id}', query_string={
         'hub.lease_seconds': 4000,
         'hub.mode': mode,
-        'hub.challenge': 'qwerty'
+        'hub.challenge': 'qwerty',
+        'hub.verify_token': verify_token,
     })
     assert resp.status_code == 200
     assert resp.data == b'qwerty'
 
 
-@pytest.mark.parametrize("status_code, mode, channel_id, lease_seconds", [
-                          (404, 'subscribe', 'pytest_channel_notfound_id', 100),
-                          (400, 'unsubscribe', 'pytest_channel_unsub_id', None),
-                          (204, 'subscribe', 'pytest_channel_unsub_id', 100),
+@pytest.mark.parametrize("status_code, mode, channel_id, lease_seconds, verify_token", [
+                          (404, 'subscribe', 'pytest_channel_notfound_id', 100, 'QWEQWE'),
+                          (400, 'unsubscribe', 'pytest_channel_unsub_id', None, 'QWEQWE'),
+                          (204, 'subscribe', 'pytest_channel_unsub_id', 100, 'QWEQWE'),
+                          (204, 'subscribe', 'pytest_channel_sub_id', 100, 'EWQEWQ'),
                           ])
-def test_hook_subscribe_error(client, status_code, mode, channel_id, lease_seconds):
+def test_hook_subscribe_error(client, status_code, mode, channel_id, lease_seconds, verify_token):
     resp = client.get(f'/hooks/new/{channel_id}', query_string={
         'hub.lease_seconds': lease_seconds,
         'hub.mode': mode,
-        'hub.challenge': 'qwerty'
+        'hub.challenge': 'qwerty',
+        'hub.verify_token': verify_token,
     })
     assert resp.status_code == status_code
