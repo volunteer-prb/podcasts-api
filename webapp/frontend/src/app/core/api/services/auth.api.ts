@@ -10,7 +10,7 @@ import { getMockSignInResponse, getMockSignUpResponse } from '@core/api/__moks__
 export class AuthApi {
   constructor(private readonly http: HttpClient) {}
 
-  register(user: User): Observable<AuthResponse<{}>> {
+  register(user: User): Observable<AuthResponse> {
     return getMockSignUpResponse(user);
 
     // TODO: Change api endpoints
@@ -20,7 +20,7 @@ export class AuthApi {
     );
   }
 
-  login(user: User): Observable<AuthResponse<{}>> {
+  login(user: User): Observable<AuthResponse> {
     return getMockSignInResponse(user);
 
     // TODO: Change api endpoints

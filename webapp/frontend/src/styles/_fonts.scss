@@ -36,8 +36,6 @@
   font-style: normal;
 }
 
-$font-family: 'TT Firs Neue';
-
 @mixin tt-first-neue-regular {
   font-family: $font-family;
   font-weight: 400;
@@ -50,81 +48,4 @@ $font-family: 'TT Firs Neue';
   font-weight: 600;
   font-style: normal;
   color: $black-color;
-}
-
-@mixin paragraph-style {
-  @include tt-first-neue-regular;
-  color: $primary-gray-color;
-}
-
-@mixin paragraph-light-style {
-  @include tt-first-neue-regular;
-  color: $black-color;
-  font-weight: 300;
-}
-
-.title-1 {
-  @include tt-first-neue-demi-bold;
-  font-size: 128px;
-  line-height: 96px;
-}
-
-.title-2 {
-  @include tt-first-neue-demi-bold;
-  font-size: 72px;
-  line-height: 56px;
-}
-
-.title-3 {
-  @include tt-first-neue-demi-bold;
-  font-size: 36px;
-  line-height: 28px;
-}
-
-.title-4 {
-  @include tt-first-neue-demi-bold;
-  font-size: 24px;
-  line-height: 31px;
-}
-
-.title-5 {
-  @include tt-first-neue-demi-bold;
-  font-size: 20px;
-  line-height: 26px;
-}
-
-.paragraph-1 {
-  @include paragraph-style;
-  font-size: 24px;
-  line-height: 31px;
-}
-
-.paragraph-2 {
-  @include paragraph-style;
-  font-size: 20px;
-  line-height: 26px;
-}
-
-.paragraph-3 {
-  @include paragraph-style;
-  font-size: 20px;
-  line-height: 26px;
-}
-
-.paragraph-4 {
-  @include paragraph-style;
-  font-size: 16px;
-  line-height: 21px;
-}
-
-.paragraph-5 {
-  @include paragraph-style;
-  font-size: 16px;
-  line-height: 21px;
-}
-
-.paragraph-6 {
-  @include paragraph-light-style;
-  font-size: 14px;
-  line-height: 18px;
 }

@@ -1,0 +1,82 @@
+@import 'fonts';
+
+body {
+  font-size: 16px;
+}
+
+@mixin paragraph-style {
+  @include tt-first-neue-regular;
+  color: $primary-gray-color;
+}
+
+@mixin paragraph-light-style {
+  @include tt-first-neue-regular;
+  color: $black-color;
+  font-weight: 300;
+}
+
+.title-1 {
+  @include tt-first-neue-demi-bold;
+  font-size: 8rem;
+  line-height: 6rem;
+}
+
+.title-2 {
+  @include tt-first-neue-demi-bold;
+  font-size: 4.5rem;
+  line-height: 3.5rem;
+}
+
+.title-3 {
+  @include tt-first-neue-demi-bold;
+  font-size: 2.25rem;
+  line-height: 1.75rem;
+}
+
+.title-4 {
+  @include tt-first-neue-demi-bold;
+  font-size: 1.5rem;
+  line-height: 1.875rem;
+}
+
+.title-5 {
+  @include tt-first-neue-demi-bold;
+  font-size: 1.25rem;
+  line-height: 1.5rem;
+}
+
+.paragraph-1 {
+  @include paragraph-style;
+  font-size: 1.5rem;
+  line-height: 1.875rem;
+}
+
+.paragraph-2 {
+  @include paragraph-style;
+  font-size: 1.25rem;
+  line-height: 1.5rem;
+}
+
+.paragraph-3 {
+  @include paragraph-style;
+  font-size: 1.25rem;
+  line-height: 1.5rem;
+}
+
+.paragraph-4 {
+  @include paragraph-style;
+  font-size: 1rem;
+  line-height: 1.3rem;
+}
+
+.paragraph-5 {
+  @include paragraph-style;
+  font-size: 1rem;
+  line-height: 1.3rem;
+}
+
+.paragraph-6 {
+  @include paragraph-light-style;
+  font-size: 0.875rem;
+  line-height: 1.125rem;
+}

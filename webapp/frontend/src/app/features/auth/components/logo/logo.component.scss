@@ -2,8 +2,8 @@
 
 .logo {
   position: relative;
-  width: 197px;
-  height: 197px;
+  width: 12.3rem;
+  height: 12.3rem;
 
   & > .circle,
   .icon-micro {
@@ -18,31 +18,31 @@
   border-radius: 50%;
 
   &-1 {
-    width: 197px;
-    height: 197px;
+    width: 12.3rem;
+    height: 12.3rem;
     background-color: $red-color;
   }
 
   &-2 {
-    width: 169px;
-    height: 169px;
+    width: 10.5rem;
+    height: 10.5rem;
     background: linear-gradient(158.23deg, #ed3001 12%, rgba(255, 51, 0, 0) 89.95%);
   }
 
   &-3 {
-    width: 143px;
-    height: 143px;
+    width: 8.9rem;
+    height: 8.9rem;
     background: linear-gradient(158.23deg, #da2c00 12%, rgba(255, 51, 0, 0) 89.95%);
   }
 }
 
 .blur {
   position: absolute;
-  top: 100px;
+  top: 6.25rem;
   left: 50%;
   transform: translateX(-50%);
   width: 150%;
-  height: 120px;
+  height: 7rem;
   background: radial-gradient(
     100% 1441.55% at 10.47% 0%,
     rgba(243, 244, 248, 0.85) 0%,

@@ -7,7 +7,7 @@ import { environment } from 'src/environments/environment';
 export class ProxyInterceptor implements HttpInterceptor {
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const REQUEST = req.clone({
-      url: environment.restUrl + req.url,
+      url: environment.apiUrl + req.url,
     });
 
     return next.handle(REQUEST);

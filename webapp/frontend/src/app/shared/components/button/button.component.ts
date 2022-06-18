@@ -1,8 +1,7 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { CssStyles } from '@core/types/css-styles.type';
 
 @Component({
-  selector: 'app-button',
+  selector: 'app-button, [appButton]',
   templateUrl: './button.component.html',
   styleUrls: ['./button.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -10,16 +9,5 @@ import { CssStyles } from '@core/types/css-styles.type';
 export class ButtonComponent {
   @Input() disabled: boolean;
 
-  @Input() width: number | string;
-
-  @Input() height: number;
-
   @Input() type: 'fill' | 'outline' = 'fill';
-
-  get styles(): CssStyles {
-    return {
-      width: typeof this.width === 'string' ? this.width : `${this.width}px`,
-      height: `${this.height}px`,
-    };
-  }
 }

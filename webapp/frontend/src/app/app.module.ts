@@ -24,7 +24,7 @@ import { CoreModule } from '@core/core.module';
   providers: [
     {
       provide: API_BASE_URL,
-      useValue: environment.restUrl,
+      useValue: environment.apiUrl,
     },
   ],
   bootstrap: [AppComponent],
