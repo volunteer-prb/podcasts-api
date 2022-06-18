@@ -36,11 +36,11 @@ export class AuthService {
     this.isAuthorized$.next(false);
   };
 
-  login(user: User): Observable<AuthResponse> {
+  login(user: User): Observable<AuthResponse<{}>> {
     return this.authApi.login(user).pipe(tap(this.handleSuccessAuth));
   }
 
-  register(user: User): Observable<AuthResponse> {
+  register(user: User): Observable<AuthResponse<{}>> {
     return this.authApi.register(user).pipe(tap(this.handleSuccessAuth));
   }
 }

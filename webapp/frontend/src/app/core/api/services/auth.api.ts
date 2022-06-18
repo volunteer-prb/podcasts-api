@@ -10,17 +10,20 @@ import { getMockSignInResponse, getMockSignUpResponse } from '@core/api/__moks__
 export class AuthApi {
   constructor(private readonly http: HttpClient) {}
 
-  register(user: User): Observable<AuthResponse> {
+  register(user: User): Observable<AuthResponse<{}>> {
     return getMockSignUpResponse(user);
 
     // TODO: Change api endpoints
-    return this.http.post<AuthResponse>(`${ApiContrillers.AUTH}/${ApiContrillers.REGISTER}`, user);
+    return this.http.post<AuthResponse<{}>>(
+      `${ApiContrillers.AUTH}/${ApiContrillers.REGISTER}`,
+      user,
+    );
   }
 
-  login(user: User): Observable<AuthResponse> {
+  login(user: User): Observable<AuthResponse<{}>> {
     return getMockSignInResponse(user);
 
     // TODO: Change api endpoints
-    return this.http.post<AuthResponse>(`${ApiContrillers.AUTH}/${ApiContrillers.LOGIN}`, user);
+    return this.http.post<AuthResponse<{}>>(`${ApiContrillers.AUTH}/${ApiContrillers.LOGIN}`, user);
   }
 }

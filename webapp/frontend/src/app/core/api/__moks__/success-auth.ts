@@ -3,8 +3,9 @@ import { of, throwError } from 'rxjs';
 import { AuthResponse } from '../models/auth-response.model';
 import { User } from '../models/user.model';
 
-export const SuccessAuth: AuthResponse = {
-  message: 'success',
+export const SuccessAuth: AuthResponse<{}> = {
+  status: 'success',
+  data: {},
 };
 
 export const mockUser: User = {
