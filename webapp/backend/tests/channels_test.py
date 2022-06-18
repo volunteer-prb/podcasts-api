@@ -34,14 +34,20 @@ def app(tmpdir):
         upgrade(migrations_dir)
 
         # create data for tests
-        channel_subscribe = SourceChannel(title='test subscribe',
-                                          channel_id='pytest_channel_sub_id',
-                                          pubsubhubbub_mode='subscribe',
-                                          )
-        channel_unsubscribe = SourceChannel(title='test unsubscribe',
-                                            channel_id='pytest_channel_unsub_id',
-                                            pubsubhubbub_mode='unsubscribe',
-                                            )
+        channel_subscribe = SourceChannel(
+            title='test subscribe',
+            channel_id='pytest_channel_sub_id',
+            pubsubhubbub_mode='subscribe',
+            verify_token='qweqwe',
+            secret='qweqwe',
+        )
+        channel_unsubscribe = SourceChannel(
+            title='test unsubscribe',
+            channel_id='pytest_channel_unsub_id',
+            pubsubhubbub_mode='unsubscribe',
+            verify_token='qweqwe',
+            secret='qweqwe',
+        )
         db.session.add(channel_subscribe)
         db.session.add(channel_unsubscribe)
         db.session.commit()
@@ -58,10 +64,11 @@ def client(app, celery):
     return app.test_client()
 
 
-@pytest.mark.parametrize("filter, expected_length", [('%', 2),
-                                                     ('%unsub%', 1),
-                                                     ('notfound', 0),
-                                                     ])
+@pytest.mark.parametrize("filter, expected_length", [
+    ('%', 2),
+    ('%unsub%', 1),
+    ('notfound', 0),
+])
 def test_find(client, filter, expected_length):
     resp = client.get('/channels/find', query_string={
         'filter_by_title__ilike': filter,
@@ -70,17 +77,23 @@ def test_find(client, filter, expected_length):
     assert resp.json['status'] == 'success'
     assert resp.json['data']['pagination']['page'] == 1
     assert len(resp.json['data']['items']) == expected_length
+    if expected_length > 0:
+        assert 'verify_token' not in resp.json['data']['items'][0]
+        assert 'secret' not in resp.json['data']['items'][0]
 
 
-@pytest.mark.parametrize("_id, expected_title", [(1, 'test subscribe'),
-                                                 (2, 'test unsubscribe'),
-                                                 ])
+@pytest.mark.parametrize("_id, expected_title", [
+    (1, 'test subscribe'),
+    (2, 'test unsubscribe'),
+])
 def test_get(client, _id, expected_title):
     resp = client.get(f'/channels/{_id}')
     assert resp.status_code == 200
     assert resp.json['status'] == 'success'
     assert resp.json['data']['id'] == _id
     assert resp.json['data']['title'] == expected_title
+    assert 'verify_token' not in resp.json['data']
+    assert 'secret' not in resp.json['data']
 
 
 def test_get_notfound(client):
@@ -89,15 +102,24 @@ def test_get_notfound(client):
     assert resp.json['status'] == 'error'
 
 
-def test_post(client):
+def test_post(app, client):
     resp = client.post('/channels/', json=dict(
         title='test post',
         channel_id='pytest_channel_post_id',
         pubsubhubbub_mode='subscribe',
+        verify_token='verify_must_not_be_changed',
+        secret='secret_must_not_be_changed',
     ))
     assert resp.status_code == 200
     assert resp.json['status'] == 'success'
     assert resp.json['data']['title'] == 'test post'
+    assert 'verify_token' not in resp.json['data']
+    assert 'secret' not in resp.json['data']
+
+    with app.app_context():
+        tested_channel = SourceChannel.query.filter_by(channel_id='pytest_channel_post_id').first()
+        assert tested_channel.verify_token != 'verify_must_not_be_changed'
+        assert tested_channel.secret != 'secret_must_not_be_changed'
 
 
 def test_post_error(client):
@@ -110,14 +132,21 @@ def test_post_error(client):
     assert resp.json['message'] == 'Column `pubsubhubbub_mode` must have not null value'
 
 
-def test_put(client):
+def test_put(app, client):
     resp = client.put('/channels/1', json=dict(
         title='test put',
+        verify_token='verify_must_not_be_changed',
+        secret='secret_must_not_be_changed',
     ))
     assert resp.status_code == 200
     assert resp.json['status'] == 'success'
     assert resp.json['data']['title'] == 'test put'
     assert resp.json['data']['channel_id'] == 'pytest_channel_sub_id'
+
+    with app.app_context():
+        tested_channel = SourceChannel.query.filter_by(id=1).first()
+        assert tested_channel.verify_token != 'verify_must_not_be_changed'
+        assert tested_channel.secret != 'secret_must_not_be_changed'
 
 
 def test_put_error(client):

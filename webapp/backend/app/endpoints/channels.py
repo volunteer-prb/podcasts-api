@@ -34,6 +34,7 @@ def find_channels():
         include=g.includes,
         exclude=[
             'verify_token',
+            'secret',
         ],
     )
 
@@ -53,6 +54,7 @@ def get_channel(id=None):
         include=g.includes,
         exclude=[
             'verify_token',
+            'secret',
         ],
     )
 
@@ -91,27 +93,41 @@ def create_or_update_channel(id=None):
         channel = SourceChannel()
 
     # deserialize json body to object
-    channel.deserialize(request.json) \
-        .check_constrains()
+    channel.deserialize(
+        request.json,
+        exclude=[
+            'verify_token',
+            'secrets',
+        ],
+    )
+    # generate new secrets every time and resubscribe (below) with updated values
+    channel.verify_token = generate_secret()
+    channel.secret = generate_secret()
+    channel.check_constrains()
 
     # additional checks
     if channel.pubsubhubbub_mode.lower() not in ['subscribe', 'unsubscribe']:
         raise BadRequest('Column `pubsubhubbub_mode` must be "subscribe" or "unsubscribe"')
 
     channel.pubsubhubbub_mode = channel.pubsubhubbub_mode.lower()
-    channel.verify_token = generate_secret()
 
     # save to db
     db.session.add(channel)
     db.session.commit()
 
     # change subscription mode
-    pubsubhubbub.subscribe.delay(channel.channel_id, channel.verify_token, mode_subscribe=channel.pubsubhubbub_mode)
+    pubsubhubbub.subscribe.delay(
+        channel.channel_id,
+        verify_token=channel.verify_token,
+        secret=channel.secret,
+        mode_subscribe=channel.pubsubhubbub_mode,
+    )
 
     return channel.serialize(
         include=g.includes,
         exclude=[
             'verify_token',
+            'secret',
         ],
     )
 

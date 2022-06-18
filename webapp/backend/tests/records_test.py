@@ -45,13 +45,17 @@ def app(tmpdir):
         upgrade(migrations_dir)
 
         # create data for tests
-        output_service = TelegramOutputService(title='Популярная политика',
-                                               channel_id=-1000000000000,
-                                               )
-        source_channel = SourceChannel(title='Популярная политика',
-                                          channel_id='UC7Elc-kLydl-NAV4g204pDQ',
-                                          pubsubhubbub_mode='subscribe',
-                                          )
+        output_service = TelegramOutputService(
+            title='Популярная политика',
+            channel_id=-1000000000000,
+        )
+        source_channel = SourceChannel(
+            title='Популярная политика',
+            channel_id='UC7Elc-kLydl-NAV4g204pDQ',
+            pubsubhubbub_mode='subscribe',
+            verify_token='qweqwe',
+            secret='qweqwe',
+        )
         video = YoutubeVideo(
             yt_id='KBOny-tYdNQ',
             channel=source_channel,
@@ -77,11 +81,12 @@ def app(tmpdir):
         db.session.add_all([
             source_channel,
             output_service,
-            SourceChannelOutputService(output_service=output_service,
-                                       source_channel=source_channel,
-                                       ),
+            SourceChannelOutputService(
+                output_service=output_service,
+                source_channel=source_channel,
+            ),
             video,
-            record
+            record,
         ])
         db.session.commit()
 

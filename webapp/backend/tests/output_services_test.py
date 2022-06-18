@@ -35,16 +35,21 @@ def app(tmpdir):
         upgrade(migrations_dir)
 
         # create data for tests
-        output_service = TelegramOutputService(title='test telegram channel',
-                                               channel_id=-1000000000000,
-                                               )
-        channel_subscribe = SourceChannel(title='test subscribe',
-                                          channel_id='pytest_channel_sub_id',
-                                          pubsubhubbub_mode='subscribe',
-                                          )
-        source_output = SourceChannelOutputService(output_service=output_service,
-                                                   source_channel=channel_subscribe,
-                                                   )
+        output_service = TelegramOutputService(
+            title='test telegram channel',
+            channel_id=-1000000000000,
+        )
+        channel_subscribe = SourceChannel(
+            title='test subscribe',
+            channel_id='pytest_channel_sub_id',
+            pubsubhubbub_mode='subscribe',
+            verify_token='qweqwe',
+            secret='qweqwe',
+        )
+        source_output = SourceChannelOutputService(
+            output_service=output_service,
+            source_channel=channel_subscribe,
+        )
         db.session.add_all([channel_subscribe, output_service, source_output])
         db.session.commit()
 
@@ -60,10 +65,11 @@ def client(app, celery):
     return app.test_client()
 
 
-@pytest.mark.parametrize("filter, expected_length", [('%', 1),
-                                                     ('%telegram%', 1),
-                                                     ('notfound', 0),
-                                                     ])
+@pytest.mark.parametrize("filter, expected_length", [
+    ('%', 1),
+    ('%telegram%', 1),
+    ('notfound', 0),
+])
 def test_find(client, filter, expected_length):
     resp = client.get('/outputs/find', query_string={
         'filter_by_title__ilike': filter,
@@ -74,8 +80,9 @@ def test_find(client, filter, expected_length):
     assert len(resp.json['data']['items']) == expected_length
 
 
-@pytest.mark.parametrize("_id, expected_title", [(1, 'test telegram channel'),
-                                                 ])
+@pytest.mark.parametrize("_id, expected_title", [
+    (1, 'test telegram channel'),
+])
 def test_get(client, _id, expected_title):
     resp = client.get(f'/outputs/{_id}', query_string={
         'include_sources': 'yes',
