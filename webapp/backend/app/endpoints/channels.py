@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from flask import Blueprint, g, request
 from flask_sqlalchemy_extension.func import serialize
 from werkzeug.exceptions import BadRequest
@@ -110,6 +112,9 @@ def create_or_update_channel(id=None):
         raise BadRequest('Column `pubsubhubbub_mode` must be "subscribe" or "unsubscribe"')
 
     channel.pubsubhubbub_mode = channel.pubsubhubbub_mode.lower()
+    # after update current subscription does not valid, reset expires_at datetime field
+    # this would be changed in /hooks/new subscription confirmation with correct values
+    channel.pubsubhubbub_expires_at = datetime.now()
 
     # save to db
     db.session.add(channel)
