@@ -7,5 +7,5 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CheckboxComponent {
-  @Input() text: string = 'Запомнить пароль';
+  @Input() text: string = '';
 }

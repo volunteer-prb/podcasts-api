@@ -1,9 +1,9 @@
-<form [formGroup]="form" class="sign-up">
-  <h2 class="sign-up__title title-4">Зарегистрируйтесь</h2>
-  <p class="sign-up__subtitle paragraph-4">{{ subtitle$ | async }}</p>
+<form [formGroup]="form" class="auth">
+  <h2 class="auth__title title-4">Зарегистрируйтесь</h2>
+  <p class="auth__subtitle paragraph-4">{{ subtitle$ | async }}</p>
 
   <ng-container *ngIf="(currentSignUpState$ | async) === signUpStates.EMAIL">
-    <div class="sign-up__input">
+    <div class="auth__input">
       <input-field
         [isInvalid]="isInvalidEmail"
         formControlName="email"
@@ -14,7 +14,7 @@
   </ng-container>
 
   <ng-container *ngIf="(currentSignUpState$ | async) === signUpStates.PASSWORD">
-    <div class="sign-up__input">
+    <div class="auth__input">
       <input-field
         [isInvalid]="isInvalidPassword"
         formControlName="password"
@@ -22,7 +22,7 @@
         type="password"
       ></input-field>
     </div>
-    <div class="sign-up__input">
+    <div class="auth__input">
       <input-field
         formControlName="confirmPassword"
         placeholder="Подтвердите пароль"
@@ -31,12 +31,12 @@
     </div>
   </ng-container>
 
-  <div class="sign-up__button">
+  <div class="auth__button">
     <app-button (click)="onClickRegisterButton()" [disabled]="isDisabledButton" width="100%">
       Зарегистрироваться
     </app-button>
   </div>
-  <p class="sign-up__login">
+  <p class="auth__actions">
     <span class="paragraph-6">Есть аккаунт?</span>
     <span class="link" (click)="navigateToSignIn()">Войти</span>
   </p>

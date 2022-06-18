@@ -1,7 +1,7 @@
-<form [formGroup]="form" class="sign-in">
-  <h2 class="sign-in__title title-4">Войдите в аккаунт</h2>
-  <p class="sign-in__subtitle paragraph-4">Введите свой Email и пароль</p>
-  <div class="sign-in__input">
+<form [formGroup]="form" class="auth">
+  <h2 class="auth__title title-4">Войдите в аккаунт</h2>
+  <p class="auth__subtitle paragraph-4">Введите свой Email и пароль</p>
+  <div class="auth__input">
     <input-field
       [isInvalid]="isInvalidEmail"
       formControlName="email"
@@ -9,7 +9,7 @@
       type="email"
     ></input-field>
   </div>
-  <div class="sign-in__input">
+  <div class="auth__input">
     <input-field
       [isInvalid]="isInvalidPassword"
       formControlName="password"
@@ -17,17 +17,17 @@
       type="password"
     ></input-field>
   </div>
-  <div class="sign-in__helpers">
-    <checkbox></checkbox>
+  <div class="auth__helpers">
+    <checkbox text="Запомнить пароль"></checkbox>
     <span class="link">Забыли пароль?</span>
   </div>
-  <div (click)="onClickLoginButton()" class="sign-in__button">
+  <div (click)="onClickLoginButton()" class="auth__button">
     <app-button [disabled]="!isValidForm" width="100%">Войти</app-button>
   </div>
-  <div class="sign-in__button">
+  <div class="auth__button">
     <google-button></google-button>
   </div>
-  <p class="sign-in__register">
+  <p class="auth__actions">
     <span class="paragraph-6">Нет аккаунта?</span>
     <span class="link" (click)="navigateToSignUp()">Зарегистрироваться</span>
   </p>
