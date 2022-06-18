@@ -99,6 +99,15 @@ def runner(app):
     return app.test_cli_runner()
 
 
+@pytest.mark.parametrize("key, signature", [
+    ('QWE-QWE', 'e4945708bb3e762c2b0911e27a8873230d48e56'),
+    ('QWEQWE', '19f33f8c21e4eb5bbdf6ecb33afc3e9e99439')
+])
+def test_signature(key, signature):
+    _sign = generate_signature(xml_example.encode('utf8'), key)
+    assert _sign == signature
+
+
 def test_hooks(client):
     _sign = generate_signature(xml_example.encode('utf8'), 'QWE-QWE')
     headers = {
