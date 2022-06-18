@@ -4,7 +4,7 @@ from werkzeug.exceptions import BadRequest
 
 from app import db
 from app.celery import pubsubhubbub
-from app.celery.pubsubhubbub import generate_verify_token
+from app.celery.pubsubhubbub import generate_secret
 from app.models.source_channels import SourceChannel
 
 channels = Blueprint('channels', __name__)
@@ -99,7 +99,7 @@ def create_or_update_channel(id=None):
         raise BadRequest('Column `pubsubhubbub_mode` must be "subscribe" or "unsubscribe"')
 
     channel.pubsubhubbub_mode = channel.pubsubhubbub_mode.lower()
-    channel.verify_token = generate_verify_token()
+    channel.verify_token = generate_secret()
 
     # save to db
     db.session.add(channel)
