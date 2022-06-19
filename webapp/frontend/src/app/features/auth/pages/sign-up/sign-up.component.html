@@ -1,0 +1,43 @@
+<form [formGroup]="form" class="auth">
+  <h2 class="auth__title title-4">Зарегистрируйтесь</h2>
+  <p class="auth__subtitle paragraph-4">{{ subtitle$ | async }}</p>
+
+  <ng-container *ngIf="(currentSignUpState$ | async) === signUpStates.EMAIL">
+    <div class="auth__input">
+      <input-field
+        [isInvalid]="isInvalidEmail"
+        formControlName="email"
+        placeholder="Email"
+        type="email"
+      ></input-field>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="(currentSignUpState$ | async) === signUpStates.PASSWORD">
+    <div class="auth__input">
+      <input-field
+        [isInvalid]="isInvalidPassword"
+        formControlName="password"
+        placeholder="Пароль"
+        type="password"
+      ></input-field>
+    </div>
+    <div class="auth__input">
+      <input-field
+        formControlName="confirmPassword"
+        placeholder="Подтвердите пароль"
+        type="password"
+      ></input-field>
+    </div>
+  </ng-container>
+
+  <div class="auth__button">
+    <app-button (click)="onClickRegisterButton()" [disabled]="isDisabledButton">
+      Зарегистрироваться
+    </app-button>
+  </div>
+  <p class="auth__actions">
+    <span class="paragraph-6">Есть аккаунт?</span>
+    <span class="link" (click)="navigateToSignIn()">Войти</span>
+  </p>
+</form>

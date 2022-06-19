@@ -1,0 +1,87 @@
+@import 'vars';
+
+.auth-wrapper {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: row;
+
+  &__router-outlet {
+    width: 100%;
+    height: 100%;
+  }
+
+  &__logo-section {
+    background-color: $light-gray-color;
+    position: relative;
+
+    & > * {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    @media (max-width: $tablet-device-width) {
+      display: none;
+    }
+  }
+}
+
+.section {
+  width: 50%;
+
+  @media (max-width: $tablet-device-width) {
+    width: 100%;
+  }
+}
+
+.auth {
+  margin: auto;
+  width: 50%;
+  min-width: 17rem;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  &__title {
+    margin-bottom: 0.5rem;
+  }
+
+  &__subtitle {
+    margin-bottom: 2.25rem;
+  }
+
+  &__input {
+    margin-bottom: 1rem;
+  }
+
+  &__button {
+    margin-bottom: 1.25rem;
+  }
+
+  &__helpers {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.85rem;
+  }
+
+  &__actions {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+    & > .link {
+      margin-left: 0.5rem;
+    }
+  }
+
+  @media (max-width: $tablet-device-width) {
+    width: 100%;
+    padding: 1.5rem;
+  }
+}

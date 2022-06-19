@@ -1,0 +1,39 @@
+%icon {
+  position: relative;
+  display: inline-block;
+  background-size: 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.icon-micro {
+  @extend %icon;
+  width: 64px;
+  height: 80px;
+  background-image: url('/assets/icons/micro.svg');
+}
+
+.icon-eye-open {
+  @extend %icon;
+  width: 24px;
+  height: 24px;
+  background-color: $gray-color;
+  -webkit-mask-image: url('/assets/icons/eye-open.svg');
+  mask-image: url('/assets/icons/eye-open.svg');
+}
+
+.icon-eye-close {
+  @extend %icon;
+  width: 24px;
+  height: 24px;
+  background-color: $gray-color;
+  -webkit-mask-image: url('/assets/icons/eye-close.svg');
+  mask-image: url('/assets/icons/eye-close.svg');
+}
+
+.icon-google {
+  @extend %icon;
+  width: 22px;
+  height: 22px;
+  background-image: url('/assets/icons/google.svg');
+}
