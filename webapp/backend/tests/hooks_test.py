@@ -6,6 +6,7 @@ from flask_migrate import init, migrate, upgrade
 
 from app import create_app, db
 from app.celery import media_manager as _media_manager, celery as _celery
+from app.celery.pubsubhubbub import generate_signature
 from app.models.source_channels import SourceChannel
 
 xml_example = '''<feed xmlns:yt="http://www.youtube.com/xml/schemas/2015"
@@ -63,14 +64,20 @@ def app(tmpdir):
         upgrade(migrations_dir)
 
         # create data for tests
-        channel_subscribe = SourceChannel(title='test subscribe',
-                                          channel_id='pytest_channel_sub_id',
-                                          pubsubhubbub_mode='subscribe',
-                                          )
-        channel_unsubscribe = SourceChannel(title='test unsubscribe',
-                                            channel_id='pytest_channel_unsub_id',
-                                            pubsubhubbub_mode='unsubscribe',
-                                            )
+        channel_subscribe = SourceChannel(
+            title='test subscribe',
+            channel_id='pytest_channel_sub_id',
+            pubsubhubbub_mode='subscribe',
+            verify_token='QWEQWE',
+            secret='QWE-QWE',
+        )
+        channel_unsubscribe = SourceChannel(
+            title='test unsubscribe',
+            channel_id='pytest_channel_unsub_id',
+            pubsubhubbub_mode='unsubscribe',
+            verify_token='EWQEWQ',
+            secret='EWQ-EWQ',
+        )
         db.session.add(channel_subscribe)
         db.session.add(channel_unsubscribe)
         db.session.commit()
@@ -92,36 +99,80 @@ def runner(app):
     return app.test_cli_runner()
 
 
+@pytest.mark.parametrize("key, signature", [
+    ('QWE-QWE', 'e4945708bb3e762c2b0911e27a8873230d48e56'),
+    ('QWEQWE', '19f33f8c21e4eb5bbdf6ecb33afc3e9e99439')
+])
+def test_signature(key, signature):
+    _sign = generate_signature(xml_example.encode('utf8'), key)
+    assert _sign == signature
+
+
 def test_hooks(client):
-    resp = client.post('/hooks/new/pytest_channel_sub_id', data=xml_example)
+    _sign = generate_signature(xml_example.encode('utf8'), 'QWE-QWE')
+    headers = {
+        'X-Hub-Signature': f'sha1={_sign}',
+    }
+    resp = client.post('/hooks/new/pytest_channel_sub_id', data=xml_example, headers=headers)
     assert resp.status_code == 200
     assert resp.is_json is True
     assert resp.json['status'] == 'success'
     assert resp.json['data']['yt_id'] == 'VIDEO_ID_PYTEST'
 
 
-@pytest.mark.parametrize("mode, channel_id", [('subscribe', 'pytest_channel_sub_id'),
-                                              ('unsubscribe', 'pytest_channel_unsub_id'),
-                                              ])
-def test_hook_subscribe_good(client, mode, channel_id):
+def test_hooks_invalid_secret(client):
+    _sign = generate_signature(xml_example.encode('utf8'), 'INVALID_KEY')
+    headers = {
+        'X-Hub-Signature': f'sha1={_sign}',
+    }
+    resp = client.post('/hooks/new/pytest_channel_sub_id', data=xml_example, headers=headers)
+    assert resp.status_code == 200
+    assert resp.is_json is True
+    assert resp.json['status'] == 'success'
+    assert not resp.json['data']  # empty data
+
+
+@pytest.mark.parametrize("channel_id, status_code", [
+    ('pytest_channel_unsub_id', 400),
+    ('pytest_channel_notfound_id', 404),
+])
+def test_hooks_error_channel(client, channel_id, status_code):
+    # valid key for invalid channel,
+    # in real it could not be happens, but if it happened
+    _sign = generate_signature(xml_example.encode('utf8'), 'EWQ-EWQ')
+    headers = {
+        'X-Hub-Signature': f'sha1={_sign}',
+    }
+    resp = client.post(f'/hooks/new/{channel_id}', data=xml_example, headers=headers)
+    assert resp.status_code == status_code
+
+
+@pytest.mark.parametrize("mode, channel_id, verify_token", [
+    ('subscribe', 'pytest_channel_sub_id', 'QWEQWE'),
+    ('unsubscribe', 'pytest_channel_unsub_id', 'EWQEWQ'),
+])
+def test_hook_subscribe_good(client, mode, channel_id, verify_token):
     resp = client.get(f'/hooks/new/{channel_id}', query_string={
         'hub.lease_seconds': 4000,
         'hub.mode': mode,
-        'hub.challenge': 'qwerty'
+        'hub.challenge': 'qwerty',
+        'hub.verify_token': verify_token,
     })
     assert resp.status_code == 200
     assert resp.data == b'qwerty'
 
 
-@pytest.mark.parametrize("status_code, mode, channel_id, lease_seconds", [
-                          (404, 'subscribe', 'pytest_channel_notfound_id', 100),
-                          (400, 'unsubscribe', 'pytest_channel_unsub_id', None),
-                          (204, 'subscribe', 'pytest_channel_unsub_id', 100),
-                          ])
-def test_hook_subscribe_error(client, status_code, mode, channel_id, lease_seconds):
+@pytest.mark.parametrize("status_code, mode, channel_id, lease_seconds, verify_token", [
+    (404, 'subscribe', 'pytest_channel_notfound_id', 100, 'QWEQWE'),
+    (400, 'unsubscribe', 'pytest_channel_unsub_id', None, 'QWEQWE'),
+    (204, 'subscribe', 'pytest_channel_unsub_id', 100, 'QWEQWE'),
+    (204, 'subscribe', 'pytest_channel_sub_id', 100, 'EWQEWQ'),
+])
+def test_hook_subscribe_error(client, status_code, mode, channel_id, lease_seconds, verify_token):
     resp = client.get(f'/hooks/new/{channel_id}', query_string={
         'hub.lease_seconds': lease_seconds,
         'hub.mode': mode,
-        'hub.challenge': 'qwerty'
+        'hub.challenge': 'qwerty',
+        'hub.verify_token': verify_token,
     })
     assert resp.status_code == status_code

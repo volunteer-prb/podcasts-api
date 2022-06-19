@@ -1,9 +1,12 @@
+from datetime import datetime
+
 from flask import Blueprint, g, request
 from flask_sqlalchemy_extension.func import serialize
 from werkzeug.exceptions import BadRequest
 
 from app import db
 from app.celery import pubsubhubbub
+from app.celery.pubsubhubbub import generate_secret
 from app.models.source_channels import SourceChannel
 
 channels = Blueprint('channels', __name__)
@@ -26,8 +29,16 @@ def find_channels():
     Returns:
         Serialized source channels and pagination or raise an exception
     """
-    return serialize(SourceChannel.complex_query(**g.complex_query).paginate(page=g.page, per_page=g.per_page),
-                     include=g.includes)
+    return serialize(SourceChannel.complex_query(**g.complex_query).paginate(
+        page=g.page,
+        per_page=g.per_page
+    ),
+        include=g.includes,
+        exclude=[
+            'verify_token',
+            'secret',
+        ],
+    )
 
 
 @channels.route('/<int:id>', methods=['GET'])
@@ -41,7 +52,13 @@ def get_channel(id=None):
     Returns:
         Serialized source channel or raise an exception
     """
-    return SourceChannel.query.filter_by(id=id).first_or_404().serialize(include=g.includes)
+    return SourceChannel.query.filter_by(id=id).first_or_404().serialize(
+        include=g.includes,
+        exclude=[
+            'verify_token',
+            'secret',
+        ],
+    )
 
 
 @channels.route('/', methods=['POST'])
@@ -78,23 +95,46 @@ def create_or_update_channel(id=None):
         channel = SourceChannel()
 
     # deserialize json body to object
-    channel.deserialize(request.json) \
-        .check_constrains()
+    channel.deserialize(
+        request.json,
+        exclude=[
+            'verify_token',
+            'secrets',
+        ],
+    )
+    # generate new secrets every time and resubscribe (below) with updated values
+    channel.verify_token = generate_secret()
+    channel.secret = generate_secret()
+    channel.check_constrains()
 
     # additional checks
     if channel.pubsubhubbub_mode.lower() not in ['subscribe', 'unsubscribe']:
         raise BadRequest('Column `pubsubhubbub_mode` must be "subscribe" or "unsubscribe"')
 
     channel.pubsubhubbub_mode = channel.pubsubhubbub_mode.lower()
+    # after update current subscription does not valid, reset expires_at datetime field
+    # this would be changed in /hooks/new subscription confirmation with correct values
+    channel.pubsubhubbub_expires_at = datetime.now()
 
     # save to db
     db.session.add(channel)
     db.session.commit()
 
     # change subscription mode
-    pubsubhubbub.subscribe.delay(channel.channel_id, mode_subscribe=channel.pubsubhubbub_mode)
+    pubsubhubbub.subscribe.delay(
+        channel.channel_id,
+        verify_token=channel.verify_token,
+        secret=channel.secret,
+        mode_subscribe=channel.pubsubhubbub_mode,
+    )
 
-    return channel.serialize(include=g.includes)
+    return channel.serialize(
+        include=g.includes,
+        exclude=[
+            'verify_token',
+            'secret',
+        ],
+    )
 
 
 @channels.route('/<int:id>', methods=['DELETE'])
