@@ -4,13 +4,19 @@
   background-size: 100%;
   background-repeat: no-repeat;
   background-position: center;
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  mask-position: center;
+  -webkit-mask-position: center;
 }
 
 .icon-micro {
   @extend %icon;
   width: 64px;
   height: 80px;
-  background-image: url('/assets/icons/micro.svg');
+  background-color: $gray-color;
+  -webkit-mask-image: url('/assets/icons/micro.svg');
+  mask-image: url('/assets/icons/micro.svg');
 }
 
 .icon-eye-open {
@@ -36,4 +42,22 @@
   width: 22px;
   height: 22px;
   background-image: url('/assets/icons/google.svg');
+}
+
+.icon-settings {
+  @extend %icon;
+  width: 19px;
+  height: 14px;
+  background-color: $gray-color;
+  -webkit-mask-image: url('/assets/icons/settings.svg');
+  mask-image: url('/assets/icons/settings.svg');
+}
+
+.icon-logout {
+  @extend %icon;
+  width: 18px;
+  height: 18px;
+  background-color: $gray-color;
+  -webkit-mask-image: url('/assets/icons/logout.svg');
+  mask-image: url('/assets/icons/logout.svg');
 }

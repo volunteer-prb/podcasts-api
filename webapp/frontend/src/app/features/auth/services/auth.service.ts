@@ -18,7 +18,7 @@ export class AuthService {
 
   constructor(
     private readonly authApi: AuthApi,
-    private sessionStorageService: SessionStorageService,
+    private readonly sessionStorageService: SessionStorageService,
   ) {
     const authState = sessionStorageService.getItem<boolean>(StorageKeys.AUTH_STATE);
     this.isAuthorized$.next(!!authState);
@@ -42,5 +42,9 @@ export class AuthService {
 
   register(user: User): Observable<AuthResponse> {
     return this.authApi.register(user).pipe(tap(this.handleSuccessAuth));
+  }
+
+  logout() {
+    this.sessionStorageService.clear();
   }
 }

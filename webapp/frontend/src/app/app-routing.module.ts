@@ -13,13 +13,19 @@ const routes: Routes = [
   {
     path: AppRoutes.AUTH,
     loadChildren: () => import('./features/auth/auth.module').then((m) => m.AuthModule),
+    data: {
+      hasMenu: false,
+    },
   },
   {
     path: AppRoutes.CHANNELS,
     canActivate: [AuthGuard],
     loadChildren: () => import('./features/channels/channels.module').then((m) => m.ChannelsModule),
   },
-  { path: '**', component: NotFoundComponent },
+  {
+    path: '**',
+    component: NotFoundComponent,
+  },
 ];
 
 @NgModule({
