@@ -1,15 +1,18 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Pagination } from '@shared/core/pagination';
 import { LoggerService } from '@shared/services/logger.service';
-import { SourceChannel } from '../data/source-channel';
-import { ChannelsService } from '../services/channels.service';
+import { Subscription } from 'rxjs';
+import { SourceChannel } from './data/source-channel';
+import { ChannelsService } from './services/channels.service';
 
 @Component({
-  selector: 'app-channels',
+  selector: 'channels',
   templateUrl: './channels.component.html',
   styleUrls: ['./channels.component.scss'],
 })
-export class ChannelsComponent implements OnInit {
+export class ChannelsComponent implements OnInit, OnDestroy {
+  private readonly subscriptions = new Subscription();
+
   pending: boolean = false;
 
   items: SourceChannel[] = [];
@@ -18,8 +21,12 @@ export class ChannelsComponent implements OnInit {
 
   constructor(private channelsService: ChannelsService, private logger: LoggerService) {}
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.load();
+  }
+
+  ngOnDestroy() {
+    this.subscriptions.unsubscribe();
   }
 
   load() {

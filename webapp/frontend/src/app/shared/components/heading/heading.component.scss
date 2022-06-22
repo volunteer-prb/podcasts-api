@@ -1,0 +1,16 @@
+.heading {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+
+  &__title {
+    margin-top: 1.5rem;
+  }
+
+  &__account {
+    width: 100px;
+    height: 50px;
+    background-color: #ccc;
+  }
+}

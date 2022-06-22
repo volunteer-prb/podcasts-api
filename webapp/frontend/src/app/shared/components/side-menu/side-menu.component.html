@@ -1,4 +1,4 @@
-<nav [hidden]="isHidden" class="menu">
+<nav [hidden]="!(isShow$ | async)" class="menu">
   <h3 class="menu__heading paragraph-6">Conversion Service</h3>
   <ng-container *ngFor="let route of menuRoutes">
     <span class="menu__link link" [routerLink]="route.route" routerLinkActive="link--active">

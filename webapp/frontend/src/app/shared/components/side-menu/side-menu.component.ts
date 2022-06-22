@@ -2,26 +2,31 @@ import { AppRoutes } from '@core/values/app-routes.enum';
 import { AuthService } from '@features/auth/services/auth.service';
 import { RouteDataParams } from '@core/types/route-data-params.type';
 import { MenuRoutes } from './values/menu-routes.const';
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { filter, map, Observable, Subscription, switchMap } from 'rxjs';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { SideMenuVisibilityService } from './services/side-menu-visibility.service';
 
 @Component({
   selector: 'side-menu',
   templateUrl: './side-menu.component.html',
   styleUrls: ['./side-menu.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SideMenuComponent implements OnInit, OnDestroy {
   private readonly subscriptions = new Subscription();
 
   readonly menuRoutes = MenuRoutes;
 
-  isHidden = true;
+  get isShow$(): Observable<boolean> {
+    return this.sideMenuVisibilityService.isVisible$;
+  }
 
   constructor(
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private authService: AuthService,
+    private sideMenuVisibilityService: SideMenuVisibilityService,
   ) {}
 
   ngOnInit() {
@@ -33,7 +38,7 @@ export class SideMenuComponent implements OnInit, OnDestroy {
           switchMap((route) => route?.data as Observable<RouteDataParams>),
         )
         .subscribe((params) => {
-          this.isHidden = !(params.hasMenu ?? true);
+          this.sideMenuVisibilityService.setVisibility(params.hasMenu ?? true);
         }),
     );
   }
