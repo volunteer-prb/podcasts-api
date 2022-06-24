@@ -1,0 +1,61 @@
+@import 'vars';
+
+.card {
+  width: 100%;
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 0.5rem;
+  padding-right: 1.5rem;
+  border-radius: 0.5rem;
+  border: 1px solid $gray-color;
+
+  &__image {
+    height: 100%;
+    border-radius: 0.5rem;
+    background-color: $gray-color;
+    min-width: 10rem;
+    min-height: 6rem;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+
+  &__content {
+    margin-left: 1rem;
+  }
+
+  &__menu-button {
+    cursor: pointer;
+    position: absolute;
+    top: 0.5rem;
+    right: 1rem;
+    transform: rotate(90deg);
+  }
+}
+
+.content {
+  width: 100%;
+  display: inline-block;
+  min-height: 5.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+
+  &__title {
+    color: $black-color;
+    max-width: 95%;
+  }
+
+  &__decription {
+    color: $primary-gray-color;
+    max-width: 95%;
+  }
+
+  &__player {
+    width: 100%;
+  }
+}

@@ -1,0 +1,13 @@
+<nav [hidden]="!(isShow$ | async)" class="menu">
+  <h3 class="menu__heading paragraph-6">Conversion Service</h3>
+  <ng-container *ngFor="let route of menuRoutes">
+    <span class="menu__link link" [routerLink]="route.route" routerLinkActive="link--active">
+      <i class="link__icon {{ route.iconClass }}"></i>
+      <span class="link__text paragraph-6">{{ route.title }}</span>
+    </span>
+  </ng-container>
+  <span class="menu__logout link" (click)="logout()">
+    <i class="link__icon icon-logout"></i>
+    <span class="link__text paragraph-6">Выход</span>
+  </span>
+</nav>

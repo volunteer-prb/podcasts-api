@@ -1,68 +1,8 @@
-<!-- <nav class="navbar navbar-light bg-light">
-  <div class="w-100 navbar-header position-relative">
-    <div class="w-100 h-100 d-flex align-items-center justify-content-center">
-      <a class="navbar-brand" routerLink="">{{ appTitle }}</a>
-    </div>
+<div class="root">
+  <div class="root__menu">
+    <side-menu></side-menu>
   </div>
-
-  <div [class.show]="showNav" [class.close]="!showNav" class="offcanvas offcanvas-start">
-    <div class="offcanvas-header navbar-header bg-light">
-      <a (click)="showNav = !showNav">
-        <i class="bi bi-x-lg" *ngIf="showNav"></i>
-        <i class="bi bi-list" *ngIf="!showNav"></i>
-      </a>
-    </div>
-    <div class="offcanvas-body d-flex flex-column">
-      <ul class="navbar-nav justify-content-end">
-        <li class="nav-item" *ngFor="let nav of navItems">
-          <a
-            class="nav-link link-primary d-flex flex-row align-items-center"
-            [class.active]="isActive(nav.url)"
-            [routerLink]="nav.url"
-          >
-            <i class="fs-3 bi" [class]="nav.icon" [title]="nav.title"></i>
-            <span class="flex-grow-1 text-nowrap" *ngIf="showNav">{{ nav.title }}</span>
-          </a>
-        </li>
-      </ul>
-    </div>
-  </div>
-</nav>
-<div
-  *ngIf="showNavDelayed"
-  (click)="showNav = false"
-  class="offcanvas-backdrop"
-  [class.close]="!showNav"
-></div> -->
-
-<!-- <div class="router-outlet-wrapper p-1"> -->
-<router-outlet></router-outlet>
-<!-- </div> -->
-<!--
-<div class="toast-bar position-fixed bottom-0 end-0 p-3" style="z-index: 1061">
-  <ng-container *ngFor="let toast of toasts">
-    <div
-      class="toast mb-3 show"
-      role="alert"
-      aria-live="assertive"
-      aria-atomic="true"
-      [class.bg-warning]="toast.warning"
-      [class.bg-danger]="toast.error"
-    >
-      <div class="toast-header">
-        <strong class="me-auto">{{ toast.header }}</strong>
-        <small>#{{ toast.id }}</small>
-        <button
-          (click)="deleteToast(toast.id)"
-          type="button"
-          class="btn-close"
-          data-bs-dismiss="toast"
-          aria-label="Close"
-        ></button>
-      </div>
-      <div class="toast-body">
-        {{ toast.body }}
-      </div>
-    </div>
-  </ng-container>
-</div> -->
+  <main class="root__content">
+    <router-outlet></router-outlet>
+  </main>
+</div>

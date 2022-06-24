@@ -1,0 +1,18 @@
+<div class="channels">
+  <heading title="Подкасты"></heading>
+
+  <div class="channels__filter">
+    <channels-filter [channels]="mockChannelsList"></channels-filter>
+  </div>
+
+  <ng-container *ngFor="let card of mockCards">
+    <div
+      class="channels__card"
+      podcast-card
+      [image]="card.image"
+      [title]="card.title"
+      [description]="card.description"
+      [audioSource]="card.audioSource"
+    ></div>
+  </ng-container>
+</div>

@@ -9,6 +9,7 @@ import { SharedModule } from '@shared/shared.module';
 import { API_BASE_URL } from '@shared/services/communication/rest.tokens';
 import { environment } from 'src/environments/environment';
 import { CoreModule } from '@core/core.module';
+import { SideMenuModule } from '@shared/components/side-menu/side-menu.module';
 
 @NgModule({
   declarations: [AppComponent],
@@ -20,6 +21,7 @@ import { CoreModule } from '@core/core.module';
     HttpClientModule,
     FormsModule,
     SharedModule,
+    SideMenuModule,
   ],
   providers: [
     {

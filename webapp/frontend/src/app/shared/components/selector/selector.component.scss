@@ -1,0 +1,35 @@
+@import 'vars';
+
+.mat-select,
+.mat-option {
+  font-family: $font-family !important;
+}
+
+.mat-primary .mat-option.mat-selected:not(.mat-option-disabled) {
+  color: $black-color;
+  font-weight: 600;
+}
+
+.mat-form-field-infix {
+  min-width: 10rem !important;
+}
+
+.mat-form-field-appearance-fill .mat-form-field-flex {
+  background-color: #fff;
+  border: none;
+  border: 1px solid $gray-color;
+  border-radius: 0.5rem !important;
+  padding: 0 0.75em !important;
+}
+
+.mat-form-field-underline {
+  display: none;
+}
+
+.mat-form-field-appearance-fill .mat-select-arrow-wrapper {
+  transform: translateY(0) !important;
+}
+
+.mat-form-field-wrapper {
+  padding-bottom: 0;
+}

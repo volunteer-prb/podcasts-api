@@ -1,6 +1,7 @@
 <button
   class="button {{ 'button--' + type }}"
   [class.button--disabled]="disabled"
+  [class.button--selected]="selected"
   [disabled]="disabled"
 >
   <ng-content></ng-content>

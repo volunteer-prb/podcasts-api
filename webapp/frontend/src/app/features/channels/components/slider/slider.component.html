@@ -1,0 +1,32 @@
+<div class="slider">
+  <swiper
+    [slideToClickedSlide]="true"
+    (init)="initSwipe($event)"
+    [slidesPerView]="'auto'"
+    [navigation]="true"
+    [spaceBetween]="16"
+  >
+    <ng-container *ngFor="let channel of selectableItems">
+      <ng-template swiperSlide>
+        <span type="outline" app-button [selected]="channel.isSelected" (click)="select(channel)">
+          <ng-template [ngIf]="channel.logo">
+            <i class="logo" [ngStyle]="{ backgroundImage: 'url(' + channel.logo + ')' }"></i>
+          </ng-template>
+          <p>{{ channel.title }}</p>
+        </span>
+      </ng-template>
+    </ng-container>
+  </swiper>
+
+  <ng-template [ngIf]="isShowControl.left">
+    <span class="slider__button slider__button--left" (click)="prevSlide()">
+      <mat-icon>arrow_back_ios</mat-icon>
+    </span>
+  </ng-template>
+
+  <ng-template [ngIf]="isShowControl.right">
+    <span class="slider__button slider__button--right" (click)="nextSlide()">
+      <mat-icon>arrow_forward_ios</mat-icon>
+    </span>
+  </ng-template>
+</div>

@@ -1,0 +1,21 @@
+@import 'vars';
+
+.filter {
+  padding: 1rem 1.5rem;
+  background-color: #fff;
+  border-radius: 0.5rem;
+
+  &__divider {
+    margin-top: 1rem;
+    width: 100%;
+    height: 1px;
+    background-color: $gray-color;
+  }
+
+  &__controls {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+}

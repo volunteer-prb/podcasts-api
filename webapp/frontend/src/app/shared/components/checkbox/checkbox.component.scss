@@ -19,6 +19,15 @@
     appearance: none;
     cursor: pointer;
 
+    &--rounded {
+      border-radius: 50%;
+
+      &:checked::before {
+        border-color: $light-blue-color;
+        content: '' !important;
+      }
+    }
+
     &:checked {
       background-color: $light-blue-color;
       border-color: $light-blue-color;

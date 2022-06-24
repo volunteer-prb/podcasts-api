@@ -1,0 +1,44 @@
+@import 'vars';
+
+.player {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: stretch;
+  align-items: center;
+
+  &__play {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 0.25rem;
+    font-size: 1.3rem;
+    color: $light-blue-color;
+    cursor: pointer;
+  }
+
+  &__time {
+    font-size: 0.75rem;
+    line-height: 0.75rem;
+    margin-right: 0.5rem;
+  }
+
+  &__track {
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+    background-color: $gray-color;
+    height: 0.5rem;
+    border-radius: 0.25rem;
+    margin-right: 0.5rem;
+
+    & > .fill {
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 50%;
+      background-color: $light-blue-color;
+    }
+  }
+}
