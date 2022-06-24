@@ -1,5 +1,5 @@
 import { PlayerService } from './services/player.service';
-import { Subscription, fromEvent, filter } from 'rxjs';
+import { Subscription, fromEvent, filter, Observable } from 'rxjs';
 import { AfterViewInit, Component, ElementRef, Input, OnDestroy, ViewChild } from '@angular/core';
 import { AudioEvents } from './values/audio-events.enum';
 
@@ -28,6 +28,14 @@ export class PlayerComponent implements OnDestroy, AfterViewInit {
     return {
       width: `${this.currentPercent}%`,
     };
+  }
+
+  get duration(): number {
+    return this.playerService.duration ?? 0;
+  }
+
+  get currentTime$(): Observable<number> {
+    return this.playerService.currentTime$;
   }
 
   constructor(private playerService: PlayerService) {}
@@ -102,7 +110,6 @@ export class PlayerComponent implements OnDestroy, AfterViewInit {
   }
 
   seekTo(time: number) {
-    console.log(time);
     this.audio.currentTime = Math.round(time);
   }
 }

@@ -3,11 +3,11 @@
   <mat-icon (click)="togglePlaying()" class="player__play">
     {{ isPlaying ? 'pause' : 'play_arrow' }}
   </mat-icon>
-  <span class="paragraph-6 player__time">00:00</span>
+  <span class="paragraph-6 player__time">{{ currentTime$ | async | minuteSeconds }}</span>
 
   <span #track class="player__track">
     <i class="fill" [ngStyle]="fillTrackStyles"></i>
   </span>
 
-  <span class="paragraph-6 player__time">15:15</span>
+  <span class="paragraph-6 player__time">{{ duration | minuteSeconds }}</span>
 </div>

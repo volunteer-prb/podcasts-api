@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
   selector: 'checkbox',
@@ -8,4 +8,12 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 })
 export class CheckboxComponent {
   @Input() isRound = false;
+
+  @Output() checked = new EventEmitter<boolean>();
+
+  onChange(event: Event) {
+    const element = event.target as HTMLInputElement;
+
+    this.checked.emit(element.checked);
+  }
 }

@@ -48,8 +48,6 @@ export class PlayerService {
   getTimeFromPosition(x: number, width: number) {
     const percent = this.getTimelinePercent(x, width);
 
-    console.log(this.getTimeFromPercent(this.duration, percent), 'getTimeFromPercent');
-
     return this.getTimeFromPercent(this.duration, percent);
   }
 }
