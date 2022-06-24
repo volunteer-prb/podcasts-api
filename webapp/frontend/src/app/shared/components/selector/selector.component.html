@@ -1,0 +1,11 @@
+<mat-form-field appearance="fill">
+  <mat-select [value]="values[0].title">
+    <mat-option
+      (onSelectionChange)="onChange(select)"
+      *ngFor="let select of values"
+      [value]="select.type"
+    >
+      {{ select.title }}
+    </mat-option>
+  </mat-select>
+</mat-form-field>

@@ -1,0 +1,16 @@
+<div class="panel">
+  <button class="panel__notify-button button">
+    <mat-icon aria-hidden="false" aria-label="notifications">notifications</mat-icon>
+  </button>
+  <span class="paragraph-3 panel__logo">Kk</span>
+  <button [matMenuTriggerFor]="menu" class="panel__menu-button button">
+    <mat-icon aria-hidden="false" aria-label="expand more">expand_more</mat-icon>
+  </button>
+</div>
+
+<mat-menu #menu="matMenu">
+  <button mat-menu-item>
+    <mat-icon>person</mat-icon>
+    <span>Not implemented</span>
+  </button>
+</mat-menu>

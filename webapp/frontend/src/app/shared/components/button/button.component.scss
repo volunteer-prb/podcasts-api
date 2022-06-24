@@ -9,6 +9,7 @@
   border-radius: 2rem;
   padding: 0.5rem 1rem;
   min-height: 3rem;
+  min-width: 5.5rem;
   width: 100%;
   font-family: $font-family;
   font-weight: 400;
@@ -29,5 +30,10 @@
     background-color: $light-color !important;
     color: $secondary-color;
     border: none;
+  }
+
+  &--selected {
+    background-color: $light-blue-color;
+    color: $white-color;
   }
 }

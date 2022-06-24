@@ -1,0 +1,36 @@
+@import 'vars';
+
+.panel {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  &__notify-button {
+  }
+
+  &__logo {
+    min-width: 3rem;
+    min-height: 3rem;
+    background-color: $hint-blue-color;
+    border-radius: 50%;
+    margin-left: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: $blue-color;
+  }
+
+  &__menu-button {
+    margin-left: 1rem;
+  }
+}
+
+.button {
+  cursor: pointer;
+  background: none;
+  border: none;
+
+  & > * {
+    color: $black-color;
+  }
+}

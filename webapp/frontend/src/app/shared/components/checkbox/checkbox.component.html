@@ -1,4 +1,6 @@
 <div class="checkbox">
-  <input class="checkbox__input" type="checkbox" />
-  <span class="paragraph-6 checkbox__text">{{ text }}</span>
+  <input class="checkbox__input" [class.checkbox__input--rounded]="isRound" type="checkbox" />
+  <span class="checkbox__text">
+    <ng-content></ng-content>
+  </span>
 </div>

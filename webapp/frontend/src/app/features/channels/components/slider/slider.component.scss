@@ -1,0 +1,63 @@
+@import 'vars';
+@import '~swiper/css';
+@import '~swiper/css/pagination';
+
+.slider {
+  position: relative;
+
+  &__button {
+    opacity: 0.8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    background-color: $blue-color;
+    border-radius: 50%;
+    z-index: 1;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+
+    & > * {
+      color: #fff;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    &--left {
+      left: -1rem;
+    }
+
+    &--right {
+      right: 0;
+      transform: translate(50%, -50%);
+    }
+  }
+}
+
+.swiper-slide {
+  text-align: center;
+  font-size: 1rem;
+  background: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.swiper-slide {
+  width: auto;
+  height: auto;
+}
+
+.logo {
+  margin-right: 0.5rem;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background-position: center;
+  background-size: cover;
+}

@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Pagination } from '@shared/core/pagination';
 import { LoggerService } from '@shared/services/logger.service';
 import { Subscription } from 'rxjs';
+import { MockPodcastCards } from 'src/app/__mocks__/podcast-card';
 import { SourceChannel } from './data/source-channel';
 import { ChannelsService } from './services/channels.service';
 
@@ -11,6 +12,8 @@ import { ChannelsService } from './services/channels.service';
   styleUrls: ['./channels.component.scss'],
 })
 export class ChannelsComponent implements OnInit, OnDestroy {
+  readonly mockCards = MockPodcastCards;
+
   private readonly subscriptions = new Subscription();
 
   pending: boolean = false;
