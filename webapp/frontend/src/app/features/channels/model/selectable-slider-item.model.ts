@@ -1,4 +1,4 @@
-import { SliderItem } from './slider-item';
+import { SliderItem } from './slider-item.model';
 
 export interface SelectableSliderItem extends SliderItem {
   isSelected: boolean;

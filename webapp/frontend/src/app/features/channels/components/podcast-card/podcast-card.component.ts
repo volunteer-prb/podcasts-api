@@ -28,6 +28,5 @@ export class PodcastCardComponent {
 
   onClickMenu(event: CardMenuEvents) {
     this.menuItemClicked.emit(event);
-    console.log(event);
   }
 }

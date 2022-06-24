@@ -12,8 +12,8 @@ import {
 import { Subscription } from 'rxjs';
 import { SwiperComponent } from 'swiper/angular';
 import Swiper from 'swiper';
-import { SliderItem } from '@features/channels/model/slider-item';
-import { SelectableSliderItem } from '@features/channels/model/selectable-slider-item';
+import { SliderItem } from '@features/channels/model/slider-item.model';
+import { SelectableSliderItem } from '@features/channels/model/selectable-slider-item.model';
 
 @Component({
   selector: 'slider',

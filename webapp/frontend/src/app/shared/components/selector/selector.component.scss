@@ -1,12 +1,13 @@
 @import 'vars';
 
-.mat-form-field {
+.mat-select,
+.mat-option {
   font-family: $font-family !important;
 }
 
 .mat-primary .mat-option.mat-selected:not(.mat-option-disabled) {
   color: $black-color;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .mat-form-field-infix {

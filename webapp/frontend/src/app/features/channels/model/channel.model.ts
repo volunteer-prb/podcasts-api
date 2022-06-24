@@ -1,6 +1,5 @@
-export interface SliderItem {
+export interface Channel {
   title: string;
   logo?: string;
   type?: string;
-  id?: string;
 }

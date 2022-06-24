@@ -1,5 +1,6 @@
-import { Component, ViewEncapsulation } from '@angular/core';
-import { ChannelSelectValues, ChannelsList } from 'src/app/__mocks__/channels';
+import { Component, Input, ViewEncapsulation } from '@angular/core';
+import { Channel } from '@features/channels/model/channel.model';
+import { ChannelSelectValues } from 'src/app/__mocks__/channels';
 
 @Component({
   selector: 'channels-filter',
@@ -10,5 +11,5 @@ import { ChannelSelectValues, ChannelsList } from 'src/app/__mocks__/channels';
 export class ChannelsFilterComponent {
   readonly selectValues = ChannelSelectValues;
 
-  readonly channels = ChannelsList;
+  @Input() channels: Channel[];
 }
