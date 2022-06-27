@@ -17,6 +17,7 @@ jobs:
       version: 0.0.1
       org: volunteer-prb
       name: podcasts-mediamanager
+      context: ./mediamanager
       file: ./mediamanager/Dockerfile
     secrets:
       dockerhub-user: ${{ secrets.DOCKER_HUB_USERNAME }}
@@ -28,17 +29,19 @@ jobs:
       version: 0.0.1
       org: volunteer-prb
       name: podcasts-publisher
+      context: ./publisher
       file: ./publisher/Dockerfile
     secrets:
       dockerhub-user: ${{ secrets.DOCKER_HUB_USERNAME }}
       dockerhub-token: ${{ secrets.DOCKER_HUB_TOKEN }}
   webapp:
-    name: Build Publisher
+    name: Build Web App
     uses: ./.github/workflows/docker-build-push.yml
     with:
       version: 0.0.1
       org: volunteer-prb
       name: podcasts-webapp
+      context: ./webapp/backend
       file: ./webapp/backend/Dockerfile
     secrets:
       dockerhub-user: ${{ secrets.DOCKER_HUB_USERNAME }}
