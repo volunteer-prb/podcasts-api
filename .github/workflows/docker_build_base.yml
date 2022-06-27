@@ -1,0 +1,48 @@
+name: 'Build Docker images on master push'
+
+on:
+# TODO: Remove before merge
+  pull_request:
+    branches:
+    - master
+  push:
+    branches:
+    - master
+
+jobs:
+  mediamanager:
+    name: Build Mediamanager
+    uses: ./.github/workflows/docker-build-push.yml
+    with:
+      version: 0.0.1
+      org: volunteer-prb
+      name: podcasts-mediamanager
+      context: ./mediamanager
+      file: ./mediamanager/Dockerfile
+    secrets:
+      dockerhub-user: ${{ secrets.DOCKER_HUB_USERNAME }}
+      dockerhub-token: ${{ secrets.DOCKER_HUB_TOKEN }}
+  publisher:
+    name: Build Publisher
+    uses: ./.github/workflows/docker-build-push.yml
+    with:
+      version: 0.0.1
+      org: volunteer-prb
+      name: podcasts-publisher
+      context: ./publisher
+      file: ./publisher/Dockerfile
+    secrets:
+      dockerhub-user: ${{ secrets.DOCKER_HUB_USERNAME }}
+      dockerhub-token: ${{ secrets.DOCKER_HUB_TOKEN }}
+  webapp:
+    name: Build Web App
+    uses: ./.github/workflows/docker-build-push.yml
+    with:
+      version: 0.0.1
+      org: volunteer-prb
+      name: podcasts-webapp
+      context: ./webapp/backend
+      file: ./webapp/backend/Dockerfile
+    secrets:
+      dockerhub-user: ${{ secrets.DOCKER_HUB_USERNAME }}
+      dockerhub-token: ${{ secrets.DOCKER_HUB_TOKEN }}

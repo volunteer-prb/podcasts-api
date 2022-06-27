@@ -1,4 +1,14 @@
 FROM python:3.10
+
+LABEL org.opencontainers.image.version="${VERSION}"
+LABEL org.opencontainers.image.revision="${SCM_REF}"
+LABEL org.opencontainers.image.source="git@github.com:volunteer-prb/podcasts-api.git"
+LABEL org.opencontainers.image.title="Navalny Team Podcast API"
+LABEL org.opencontainers.image.description="Podcast Publisher application"
+LABEL org.opencontainers.image.authors="TODO: fill authors"
+LABEL org.opencontainers.image.vendor="Navalny Team"
+LABEL org.opencontainers.image.licenses="(C) Copyright 2022 Navalny Team"
+
 ENV VENV=/opt/venv
 RUN python3 -m venv $VENV && \
     apt-get update && \
