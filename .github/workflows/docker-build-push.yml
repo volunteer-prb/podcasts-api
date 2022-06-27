@@ -1,0 +1,69 @@
+name: 'Build Docker image'
+
+on:
+  workflow_call:
+    inputs:
+      file:
+        required: true
+        type: string
+      name:
+        required: true
+        type: string
+      version:
+        required: true
+        type: string
+      org:
+        required: true
+        type: string
+    secrets:
+      dockerhub-user:
+        required: true
+      dockerhub-token:
+        required: true
+
+
+jobs:
+  build:
+    name: 'Build & Push'
+    runs-on: ubuntu-latest
+    steps:
+    # Checkout the repository to the GitHub Actions runner
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Login to GitHub Container Registry
+      uses: docker/login-action@v1
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    - name: Extract metadata (tags, labels) for Mediamanager Docker
+      id: meta
+      uses: docker/metadata-action@v4
+      with:
+        images: ghcr.io/volunteer-prb/podcasts-mediamanager
+    - name: Print available tags and labels
+      run: |
+        echo "podcasts-mediamanager: tags ${{ steps.meta.outputs.tags }} labels: ${{ steps.meta.outputs.labels }}"
+    - name: Build Docker Image
+      uses: docker/build-push-action@v2
+      with:
+        context: .
+        file: ${{ inputs.file }}
+        tags: ghcr.io/${{ github.repository }}:${{ inputs.version }}
+        load: true
+        build-args: |
+          SCM_REF=${{ env.GITHUB_SHA }}
+          VERSION=${{ inputs.version }}
+    - name: Push Image to GitHub Container Registry
+      run: |
+        docker push ghcr.io/${{ inputs.org }}/${{ inputs.name }}:${{ inputs.version }}
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v3
+      with:
+        username: ${{ secrets.DOCKER_HUB_USERNAME }}
+        password: ${{ secrets.DOCKER_HUB_TOKEN }}
+        context: .
+        file: ${{ inputs.file }}
+        push: true
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
